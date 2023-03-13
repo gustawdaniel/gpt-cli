@@ -48,23 +48,23 @@ export GPT3_API_KEY=sk-xxx
 
 ## Usage
 
-| what you typing in terminal                                                        | answers you can execute by "ENTER"                                          |
-|------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| show me graphic card                                                               | lspci -k \                                                                  | grep -A 2 -E "(VGA\|3D)"                                        |
-| jq command that join package name and version by dash                              | jq '.name + "-" + .version'                                                 |
-| three processes with highest ram usage                                             | ps aux --sort=-%mem \                                                       | head -n 4                                            |
-| make backup of mysql db called docs                                                | mysqldump docs > docs_backup.sql                                            |
-| setup jest configured for typescript                                               | npm install --save-dev jest @types/jest ts-jest                             |
-| generate ed keys                                                                   | openssl genpkey -algorithm ed25519 -out privatekey.key                      |
-| show me content of Cargo.toml encoded as base64                                    | base64 Cargo.toml                                                           |
-| show me content of Cargo.toml encoded as base64 in single line                     | cat Cargo.toml \                                                            | base64 -w 0                                               |
-| show timer that will update every second                                           | watch -n 1 date +%T                                                         |
-| range from 10 to 15                                                                | seq 10 15                                                                   |
-| replace all lines starting from "CFG_" to starting from "CONFIG_" in file env.conf | sed -i 's/^CFG_/CONFIG_/g' env.conf                                         |
-| write one liner to detect emails in file                                           | grep -Eio '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z\                        |a-z]{2,}\b' filename   |
-| cron line to execute /bin/task every monday at 7pm                                 | 0 19 * * 1 /bin/task                                                        |
-| run rusts tests one by one                                                         | cargo test -- --test-threads=1                                              |
-| who i am and am i still needed                                                     | whoami and yes, you are still needed. <-- hahah it is authentic gpt3 answer |
+| what you typing in terminal                                                        | answers you can execute by "ENTER"                                            |
+|------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| show me graphic card                                                               | lspci -k &#124; grep -A 2 -E "(VGA&#124;3D)"                                  |
+| jq command that join package name and version by dash                              | jq '.name + "-" + .version'                                                   |
+| three processes with highest ram usage                                             | ps aux --sort=-%mem &#124; head -n 4                                          |
+| make backup of mysql db called docs                                                | mysqldump docs > docs_backup.sql                                              |
+| setup jest configured for typescript                                               | npm install --save-dev jest @types/jest ts-jest                               |
+| generate ed keys                                                                   | openssl genpkey -algorithm ed25519 -out privatekey.key                        |
+| show me content of Cargo.toml encoded as base64                                    | base64 Cargo.toml                                                             |
+| show me content of Cargo.toml encoded as base64 in single line                     | cat Cargo.toml &#124; base64 -w 0                                             |
+| show timer that will update every second                                           | watch -n 1 date +%T                                                           |
+| range from 10 to 15                                                                | seq 10 15                                                                     |
+| replace all lines starting from "CFG_" to starting from "CONFIG_" in file env.conf | sed -i 's/^CFG_/CONFIG_/g' env.conf                                           |
+| write one liner to detect emails in file                                           | grep -Eio '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z&#124;a-z]{2,}\b' filename |
+| cron line to execute /bin/task every monday at 7pm                                 | 0 19 * * 1 /bin/task                                                          |
+| run rusts tests one by one                                                         | cargo test -- --test-threads=1                                                |
+| who i am and am i still needed                                                     | whoami and yes, you are still needed. <-- hahah it is authentic gpt3 answer   |
 
 ## Features
 

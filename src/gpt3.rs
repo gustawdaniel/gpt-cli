@@ -145,7 +145,7 @@ mod tests {
         let response = result.unwrap();
         assert_eq!(response.model, "gpt-3.5-turbo-0301");
         assert_eq!(response.choices.len(), 1);
-        assert_eq!(response.choices[0].finish_reason, "stop");
+        assert_eq!(response.choices[0].finish_reason, Some("stop".to_string()));
     }
 
     #[test]
