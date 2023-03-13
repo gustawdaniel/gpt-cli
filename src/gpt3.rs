@@ -46,7 +46,7 @@ impl GPT {
                         role: "assistant".to_string(),
                         content: "npx ncu -i".to_string(),
                     },
-                    finish_reason: "stop".to_string(),
+                    finish_reason: Some("stop".to_string()),
                     index: 0,
                 }],
             };
@@ -80,11 +80,14 @@ impl GPT {
             .await
             .map_err(|e| format!("{}", e))?;
 
-        if response.choices[0].finish_reason == "stop" {
-            let response_str = serde_json::to_string(&response).unwrap();
-            cache.set(&key, &response_str);
-        } else {
-            println!("{:?}", response.choices[0]);
+        match response.choices[0].finish_reason.as_deref() {
+            Some("stop") | Some("") | None => {
+                let response_str = serde_json::to_string(&response).unwrap();
+                cache.set(&key, &response_str);
+            }
+            Some(_) => {
+                println!("{:?}", response.choices[0]);
+            }
         }
 
         Ok(response)
@@ -117,7 +120,7 @@ struct Usage {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Choice {
     pub message: Message,
-    finish_reason: String,
+    finish_reason: Option<String>,
     index: i32,
 }
 

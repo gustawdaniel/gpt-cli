@@ -1,13 +1,13 @@
 mod decompose;
 mod cache;
 mod gpt3;
+
 use inquire::{Confirm};
 
 use colored::*;
 use std::env;
 
 use std::process::{Command, Stdio};
-// use std::thread::Builder;
 use crate::gpt3::Gpt3Message;
 use tokio::runtime::Runtime;
 
@@ -40,7 +40,10 @@ async fn async_main() {
         if response.is_err() {
             let error = response.unwrap_err();
             eprintln!("{}", error.red());
-            eprintln!("Please set the GPT3_API_KEY environment variable to your OpenAI API key.");
+            if error == String::from("Error: GPT3_API_KEY environment variable is not defined.") {
+                eprintln!("Please set the GPT3_API_KEY environment variable to your OpenAI API key.");
+            } else {
+            }
             std::process::exit(1);
         }
 
@@ -58,7 +61,6 @@ async fn async_main() {
             Ok(true) => {
                 let (command_name, command_args) = decompose::decompose(command);
 
-                // let mut child = Command::new(command_name).args(command_args)
                 let mut child = Command::new(command_name).args(command_args)
                     .stdin(Stdio::inherit())
                     .stdout(Stdio::inherit())
@@ -66,15 +68,13 @@ async fn async_main() {
                     .spawn()
                     .expect("Failed to execute command");
 
-                let status = child.wait().expect("Failed to wait for command");
+                let _ = child.wait().expect("Failed to wait for command");
 
-                // println!("Command exited with status: {}", status);
+                // println!("Command exited with status: {}", _);
             }
             Ok(false) => println!("That's too bad, I've heard great things about it."),
             Err(_) => println!("Error with questionnaire, try again later"),
         }
-
-
     });
 }
 
