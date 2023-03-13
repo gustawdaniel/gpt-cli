@@ -1,3 +1,5 @@
+[![Rust](https://github.com/gustawdaniel/gpt-cli/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/rust.yml)
+
 # Gpt Cli
 
 Linux terminal GPT3 integration with killer prompt that skip descriptions and other human-readable bullshit. It shows
