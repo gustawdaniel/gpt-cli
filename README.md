@@ -35,6 +35,19 @@ After `ENTER` you will see
 ## Installation
 
 ```
+curl -o- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
+```
+
+or
+
+```
+wget -qO- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
+```
+
+## Complication from source
+
+```
+git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli 
 cargo build --release
 sudo cp ./target/release/gpt-cli /usr/local/bin/p
 ```
@@ -72,6 +85,7 @@ export GPT3_API_KEY=sk-xxx
 - [x] Interactive commands
 - [x] Colors
 - [x] Real time stream
+- [ ] Easy to install (in progress)
 
 ## Constrains
 
@@ -105,7 +119,95 @@ instead
 sl
 ```
 
+There is problem with exporting env variables and `&&` is not supported yet. Command that will not work:
+
+| what you typing in terminal         | answers that you can copy, but not confirm by "ENTER"    | Reason                                            |
+|-------------------------------------|----------------------------------------------------------|---------------------------------------------------|
+| change language to spanish          | locale-gen es_ES.UTF-8 && update-locale LANG=es_ES.UTF-8 | no support for `&&`                               |
+| change terminal language to english | LANG=en_US.utf8                                          | env are not passed from subprocess to parent shel |
+
+## Alternatives
+
+Stars was updated 14-03-2023
+
+| This project    |                                                               |
+|-----------------|---------------------------------------------------------------|
+| Language        | rust                                                          |
+| Easy to install | no (wip)                                                      |
+| Streaming       | yes                                                           |
+| Stars           | 4                                                             |
+| Release         | 13-03-2023                                                    |
+| Last update     | 14-03-2023                                                    |
+| Engine          | gpt-3.5-turbo                                                 |
+| Goal            | save time for cli commands typing if you do not remember them |
+
+| gpt3-cli        | https://github.com/CrazyPython/gpt3-cli                 |
+|-----------------|---------------------------------------------------------|
+| Language        | python                                                  |
+| Easy to install | medium                                                  |
+| Streaming       | yes                                                     |
+| Stars           | 50                                                      |
+| Release         | 23-03-2021                                              |
+| Last update     | 22-04-2021                                              |
+| Engine          | all before gpt-3.5-turbo                                |
+| Goal            | A lightweight command-line interface to OpenAI's GPT-3. |
+
+| ai-cli          | https://github.com/abhagsain/ai-cli                             |
+|-----------------|-----------------------------------------------------------------|
+| Language        | typescript                                                      |
+| Easy to install | yes                                                             |
+| Streaming       | no                                                              |
+| Stars           | 935                                                             |
+| Release         | 15-11-2022                                                      |
+| Last update     | 09-12-2022                                                      |
+| Engine          | all before gpt-3.5-turbo                                        |
+| Goal            | Get answers for CLI commands from GPT3 right from your terminal |
+
+| heygpt          | https://github.com/fuyufjh/heygpt               |
+|-----------------|-------------------------------------------------|
+| Language        | rust                                            |
+| Easy to install | yes                                             |
+| Streaming       | yes                                             |
+| Stars           | 40                                              |
+| Release         | 06-03-2023                                      |
+| Last update     | 12-03-2023                                      |
+| Engine          | gpt-3.5-turbo                                   |
+| Goal            | A simple common-line interface for ChatGPT API. |
+
+| caos            | https://github.com/dabumana/caos                                    |
+|-----------------|---------------------------------------------------------------------|
+| Language        | go                                                                  |
+| Easy to install | no                                                                  |
+| Streaming       | no                                                                  |
+| Stars           | 5                                                                   |
+| Release         | 22-01-2023                                                          |
+| Last update     | 13-03-2023                                                          |
+| Engine          | all before gpt-3.5-turbo                                            |
+| Goal            | advanced, configurable conversational assistant for openai services |
+
+| gptsh           | https://github.com/shorwood/gptsh                                     |
+|-----------------|-----------------------------------------------------------------------|
+| Language        | javascript                                                            |
+| Easy to install | yes                                                                   |
+| Streaming       | no                                                                    |
+| Stars           | 99                                                                    |
+| Release         | 27-12-2020                                                            |
+| Last update     | 18-01-2022                                                            |
+| Engine          | all before gpt-3.5-turbo                                              |
+| Goal            | translate natural language questions and requests into shell commands |
+
+| rusty           | https://github.com/zahidkhawaja/rusty |
+|-----------------|---------------------------------------|
+| Language        | rust                                  |
+| Easy to install | no                                    |
+| Streaming       | no                                    |
+| Stars           | 272                                   |
+| Release         | 05-09-2022                            |
+| Last update     | 07-02-2023                            |
+| Engine          | text-davinci-003                      |
+| Goal            | help you remember bash commands       |
+
 ## Support
 
 I'm looking for challenging, remote job with rust + typescript + advanced math, so if you appreciate this project, you
-can share it and recommend me and earn employment commission.
+can share it, leave star, and recommend me earning employment commission.

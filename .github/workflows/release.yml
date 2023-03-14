@@ -2,22 +2,70 @@ name: Release
 
 on:
   release:
-    types: [created]
+    types: [ created ]
 
 jobs:
-  release:
+  release-archives:
     name: release ${{ matrix.target }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64-unknown-linux-musl] # x86_64-pc-windows-gnu
+        include:
+          # - target: wasm32-wasi
+          #   archive: tar.gz
+          # - target: x86_64-pc-windows-gnu
+          #   archive: zip
+          - target: x86_64-unknown-linux-musl
+            archive: tar.gz tar.xz tar.zst
+          - target: x86_64-apple-darwin
+            archive: zip
     steps:
       - uses: actions/checkout@master
-      - name: Compile and release
+      - name: Compile
+        id: compile
         uses: rust-build/rust-build.action@v1.4.3
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           RUSTTARGET: ${{ matrix.target }}
-#          EXTRA_FILES: "README.md" # LICENSE
+          EXTRA_FILES: "README.md LICENSE"
+          UPLOAD_MODE: none
+      - name: Upload archives artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Binary
+          path: |
+            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
+  release-binary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Build linux binary
+        id: build
+        run: cargo build --release
+      - uses: actions/upload-artifact@v3
+        with:
+          name: gpt-cli
+          path: target/release/gpt-cli
+  release-plz:
+    permissions:
+      pull-requests: write
+      contents: write
+    name: Release-plz
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run release-plz
+        uses: MarcoIeni/release-plz-action@v0.4
+        with:
+          command: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

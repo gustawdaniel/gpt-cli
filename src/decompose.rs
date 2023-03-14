@@ -1,15 +1,3 @@
-// pub fn decompose(command: &str) -> (String, Vec<String>) {
-//     let mut command = String::from(command);
-//     if command.starts_with('`') && command.ends_with('`') {
-//         command.remove(0);
-//         command.pop();
-//     }
-//     let mut parts = command.split_whitespace();
-//     let command_name = parts.next().unwrap_or_default().to_string();
-//     let command_args: Vec<String> = parts.map(|part| part.to_string()).collect();
-//     (command_name, command_args)
-// }
-
 pub fn decompose(command: &str) -> (String, Vec<String>) {
     let mut command = String::from(command);
     if command.starts_with('`') && command.ends_with('`') {
