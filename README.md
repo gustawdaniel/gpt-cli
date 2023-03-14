@@ -35,18 +35,6 @@ After `ENTER` you will see
 ## Installation
 
 ```
-curl -o- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
-```
-
-or
-
-```
-wget -qO- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
-```
-
-## Complication from source
-
-```
 git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli 
 cargo build --release
 sudo cp ./target/release/gpt-cli /usr/local/bin/p
