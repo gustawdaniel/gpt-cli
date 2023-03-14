@@ -38,7 +38,8 @@ After `ENTER` you will see
 wget -qO- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
 ```
 
-it will save `gpt-cli` and alias `p` in `/usr/local/bin` so this is why it require sudo. You can also [compile it yourself](#compilation-from-source).
+it will save `gpt-cli` and alias `p` in `/usr/local/bin` so this is why it require sudo. You can
+also [compile it yourself](#compilation-from-source).
 
 ## Config
 
@@ -47,6 +48,17 @@ Copy your `GPT3_API_KEY` to env variable. Your `.profile`, `.bashrc`, or `.zshrc
 ```bash
 export GPT3_API_KEY=sk-xxx
 ```
+
+You'd need to enter your own OpenAI API key Here's how you can get one
+
+1. Go to https://openai.com/api/login
+2. Create an account or log into your existing account
+3. Go to https://platform.openai.com/account/api-keys or
+
+![](https://user-images.githubusercontent.com/36589645/202097820-dc6905e6-4514-413b-980f-169c35ffef9a.png)
+
+Price: `$0.002 per 1,000 tokens`. Single command is about 50 tokens. So in price 1USD you have about `10.000` commands.
+Tools with model before `gpt-3.5-turbo` costs 10 times more.
 
 ## Usage
 
@@ -114,6 +126,10 @@ There is problem with exporting env variables and `&&` is not supported yet. Com
 | change language to spanish          | locale-gen es_ES.UTF-8 && update-locale LANG=es_ES.UTF-8 | no support for `&&`                               |
 | change terminal language to english | LANG=en_US.utf8                                          | env are not passed from subprocess to parent shel |
 | get my default shell                | echo $SHELL                                              | it will print $SHELL string without evaluation    |
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=gustawdaniel/gpt-cli&type=Date)](https://star-history.com/#gustawdaniel/gpt-cli&Date)
 
 ## Alternatives
 
@@ -196,9 +212,8 @@ Stars was updated 14-03-2023
 | Engine          | text-davinci-003                      |
 | Goal            | help you remember bash commands       |
 
-
-
 <a name="compilation-from-source"></a>
+
 ## Complication from source
 
 ```
@@ -206,7 +221,6 @@ git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli
 cargo build --release
 sudo cp ./target/release/gpt-cli /usr/local/bin/p
 ```
-
 
 ## Support
 
