@@ -30,6 +30,7 @@ jobs:
         with:
           RUSTTARGET: ${{ matrix.target }}
           EXTRA_FILES: "README.md LICENSE"
+          ARCHIVE_TYPES: ${{ matrix.archive }}
 #          UPLOAD_MODE: none
 #      - name: Upload archives artifacts
 #        uses: actions/upload-artifact@v3
@@ -45,10 +46,14 @@ jobs:
       - name: Build linux binary
         id: build
         run: cargo build --release
-      - uses: actions/upload-artifact@v3
+      - run: cp target/release/gpt-cli gpt-cli
+      - name: Test
+        run: ls gpt-cli
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: gpt-cli
-          path: target/release/gpt-cli
+          files: |
+            gpt-cli
 #  release-plz:
 #    permissions:
 #      pull-requests: write

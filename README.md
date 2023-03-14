@@ -125,6 +125,7 @@ There is problem with exporting env variables and `&&` is not supported yet. Com
 |-------------------------------------|----------------------------------------------------------|---------------------------------------------------|
 | change language to spanish          | locale-gen es_ES.UTF-8 && update-locale LANG=es_ES.UTF-8 | no support for `&&`                               |
 | change terminal language to english | LANG=en_US.utf8                                          | env are not passed from subprocess to parent shel |
+| get my default shell                | echo $SHELL                                              | it will print $SHELL string without evaluation    |
 
 ## Alternatives
 
