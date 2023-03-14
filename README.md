@@ -35,10 +35,10 @@ After `ENTER` you will see
 ## Installation
 
 ```
-git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli 
-cargo build --release
-sudo cp ./target/release/gpt-cli /usr/local/bin/p
+wget -qO- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
 ```
+
+it will save `gpt-cli` and alias `p` in `/usr/local/bin` so this is why it require sudo. You can also [compile it yourself](#compilation-from-source).
 
 ## Config
 
@@ -195,6 +195,18 @@ Stars was updated 14-03-2023
 | Last update     | 07-02-2023                            |
 | Engine          | text-davinci-003                      |
 | Goal            | help you remember bash commands       |
+
+
+
+<a name="compilation-from-source"></a>
+## Complication from source
+
+```
+git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli 
+cargo build --release
+sudo cp ./target/release/gpt-cli /usr/local/bin/p
+```
+
 
 ## Support
 

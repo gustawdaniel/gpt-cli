@@ -31,15 +31,9 @@ jobs:
           RUSTTARGET: ${{ matrix.target }}
           EXTRA_FILES: "README.md LICENSE"
           ARCHIVE_TYPES: ${{ matrix.archive }}
-#          UPLOAD_MODE: none
-#      - name: Upload archives artifacts
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: Binary
-#          path: |
-#            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
-#            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
   release-binary:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -51,6 +45,8 @@ jobs:
         run: ls gpt-cli
       - name: Release
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           files: |
             gpt-cli
