@@ -1,18 +1,27 @@
 [package]
 name = "gpt-cli"
-version = "0.0.4"
+version = "0.0.5"
 edition = "2021"
+
+authors = ["Daniel Gustaw <gustaw.daniel@gmail.com>"]
+license = "MIT"
+description = "Run linux commands with natural language. Eg.: 'show my graphic card' instead 'lspci | grep VGA'"
+readme = "README.md"
+homepage = "https://github.com/gustawdaniel/gpt-cli"
+repository = "https://github.com/gustawdaniel/gpt-cli"
+keywords = ["cli", "openai", "gpt3", "gpt3-cli", "gpt3-turbo"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 dirs = "4.0.0"
 serde_json = "1.0.94"
-rand="0.8.5"
+rand = "0.8.5"
 hex = "0.4.3"
-colored="2.0.0"
-serde={ version = "1.0.155", features = ["derive"] }
-reqwest={ version = "0.11", features = ["json"] }
-futures="0.3.27"
-tokio={ version = "1.26.0", features = ["full"] }
+colored = "2.0.0"
+serde = { version = "1.0.155", features = ["derive"] }
+reqwest = { version = "0.11", features = ["json"] }
+futures = "0.3.27"
+tokio = { version = "1.26.0", features = ["full"] }
 inquire = { version = "0.6.0" }

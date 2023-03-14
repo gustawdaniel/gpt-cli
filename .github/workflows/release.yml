@@ -30,14 +30,14 @@ jobs:
         with:
           RUSTTARGET: ${{ matrix.target }}
           EXTRA_FILES: "README.md LICENSE"
-          UPLOAD_MODE: none
-      - name: Upload archives artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: Binary
-          path: |
-            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
-            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
+#          UPLOAD_MODE: none
+#      - name: Upload archives artifacts
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: Binary
+#          path: |
+#            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+#            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
   release-binary:
     runs-on: ubuntu-latest
     steps:
@@ -49,23 +49,23 @@ jobs:
         with:
           name: gpt-cli
           path: target/release/gpt-cli
-  release-plz:
-    permissions:
-      pull-requests: write
-      contents: write
-    name: Release-plz
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-      - name: Run release-plz
-        uses: MarcoIeni/release-plz-action@v0.4
-        with:
-          command: release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+#  release-plz:
+#    permissions:
+#      pull-requests: write
+#      contents: write
+#    name: Release-plz
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#      - name: Install Rust toolchain
+#        uses: dtolnay/rust-toolchain@stable
+#      - name: Run release-plz
+#        uses: MarcoIeni/release-plz-action@v0.4
+#        with:
+#          command: release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
