@@ -2,7 +2,6 @@
 name = "gpt-cli"
 version = "0.0.7"
 edition = "2021"
-
 authors = ["Daniel Gustaw <gustaw.daniel@gmail.com>"]
 license = "MIT"
 description = "Run linux commands with natural language. Eg.: 'show my graphic card' instead 'lspci | grep VGA'"
@@ -25,3 +24,6 @@ reqwest = { version = "0.11", features = ["json"] }
 futures = "0.3.27"
 tokio = { version = "1.26.0", features = ["full"] }
 inquire = { version = "0.6.0" }
+
+[dev-dependencies]
+grcov = "*"
