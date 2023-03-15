@@ -1,5 +1,6 @@
 [![Test](https://github.com/gustawdaniel/gpt-cli/actions/workflows/rust.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/rust.yml)
 [![Release](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/gustawdaniel/gpt-cli/branch/main/graph/badge.svg?token=KB4F1JF9W6)](https://codecov.io/gh/gustawdaniel/gpt-cli)
 
 # Gpt Cli
 
@@ -31,6 +32,46 @@ After `ENTER` you will see
         Subsystem: CLEVO/KAPOK Computer Device 67f5
         Kernel driver in use: nvidia
 ```
+
+# More powerful every day
+
+From v0.0.8 it supports context overriding. Default system context is
+
+> Imagine you are linux terminal command selector. I will describe task, and you will respond only using linux command, without description, without explanation.
+
+Default postprocess mode is `confirm`. It shows answer and asking if it should be executed.
+
+But you can use it in other use-cases. To translate texts:
+
+```
+GPT_SYSTEM_PROMPT="I am translator from polish to english. I need to translate this text." GPT_POST=copy p Witaj świecie
+```
+
+You can redirect it to file set these environment variables as permanent.
+
+```
+export GPT_SYSTEM_PROMPT="I am translator from polish to english. I need to translate this text."; export GPT_POST=out;
+```
+
+and then translate using:
+
+```
+p "$(cat polish.txt)" > english.txt
+```
+
+To back do default
+
+```
+unset GPT_SYSTEM_PROMPT; unset GPT_POST
+```
+
+Possible values:
+
+- `GPT_SYSTEM_PROMPT` - any string that will explain gpt3 how to behave.
+- `GPT_POST`
+  - confirm - default, will ask if execute output in terminal
+  - copy - will copy your answer to terminal clipboard
+  - out - will print answer on standard output - usefully for further processing
 
 ## Installation
 
