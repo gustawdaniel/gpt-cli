@@ -2,15 +2,15 @@ name: Test
 
 on:
   push:
-    branches: [
-      "main"
-      "5-add-env-to-modify-system-prompt-and-return-output-as-standard-output-to-process-it-easy"
-    ]
+    branches-ignore:
+      - ''  # Exclude main branch if needed
+    tags-ignore:
+      - '' # Exclude annotated tags if needed
   pull_request:
-    branches: [
-      "main"
-      "5-add-env-to-modify-system-prompt-and-return-output-as-standard-output-to-process-it-easy"
-    ]
+    branches-ignore:
+      - ''  # Exclude main branch if needed
+    tags-ignore:
+      - '' # Exclude annotated tags if needed
 
 env:
   CARGO_TERM_COLOR: always
