@@ -1,4 +1,4 @@
-[![Test](https://github.com/gustawdaniel/gpt-cli/actions/workflows/rust.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/rust.yml)
+[![Test](https://github.com/gustawdaniel/gpt-cli/actions/workflows/test.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/test.yml)
 [![Release](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml)
 [![codecov](https://codecov.io/gh/gustawdaniel/gpt-cli/branch/main/graph/badge.svg?token=KB4F1JF9W6)](https://codecov.io/gh/gustawdaniel/gpt-cli)
 
@@ -33,7 +33,7 @@ After `ENTER` you will see
         Kernel driver in use: nvidia
 ```
 
-# More powerful every day
+## More powerful every day
 
 From v0.0.8 it supports context overriding. Default system context is
 
