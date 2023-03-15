@@ -1,18 +1,17 @@
+use crate::cache::Cache;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use crate::cache::Cache;
 
-pub(crate) struct GPT {
+pub(crate) struct Gpt {
     debug: bool,
     api_key: String,
 }
 
-
-impl GPT {
+impl Gpt {
     pub(crate) fn new(debug: Option<bool>) -> Self {
         let api_key = match std::env::var("GPT3_API_KEY") {
             Ok(val) => val,
-            Err(_) => String::from("")
+            Err(_) => String::from(""),
         };
 
         Self {
@@ -21,11 +20,20 @@ impl GPT {
         }
     }
 
+    pub(crate) fn get_system_prompt() -> String {
+        match std::env::var("GPT_SYSTEM_PROMPT") {
+            Ok(val) => val,
+            Err(_) => String::from("Imagine you are linux terminal commands selector. I will describe task and you will respond only using linux command, without description, without explanation.")
+        }
+    }
+
     fn check_api_key(&self) -> Result<(), String> {
         if self.api_key.len().gt(&0) {
             Ok(())
         } else {
-            Err(String::from("Error: GPT3_API_KEY environment variable is not defined."))
+            Err(String::from(
+                "Error: GPT3_API_KEY environment variable is not defined.",
+            ))
         }
     }
 
@@ -75,10 +83,10 @@ impl GPT {
             .json(&data)
             .send()
             .await
-            .map_err(|e| format!("{}", e))?
+            .map_err(|e| format!("{e}"))?
             .json::<Gpt3Response>()
             .await
-            .map_err(|e| format!("{}", e))?;
+            .map_err(|e| format!("{e}"))?;
 
         match response.choices[0].finish_reason.as_deref() {
             Some("stop") | Some("") | None => {
@@ -135,10 +143,30 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_get_system_prompt_with_env_var() {
+        std::env::set_var("GPT_SYSTEM_PROMPT", "Custom prompt");
+        let prompt = Gpt::get_system_prompt();
+        assert_eq!(prompt, "Custom prompt");
+    }
+
+    #[test]
+    fn test_get_system_prompt_without_env_var() {
+        std::env::remove_var("GPT_SYSTEM_PROMPT");
+        let prompt = Gpt::get_system_prompt();
+        assert_eq!(
+            prompt,
+            "Imagine you are linux terminal commands selector. I will describe task and you will respond only using linux command, without description, without explanation."
+        );
+    }
+
+    #[test]
     fn test_ask_with_env_var_and_debug_true() {
         std::env::set_var("GPT3_API_KEY", "test_key");
-        let gpt = GPT::new(Some(true));
-        let messages = vec![Gpt3Message { content: "hello".to_string(), role: "user".to_string() }];
+        let gpt = Gpt::new(Some(true));
+        let messages = vec![Gpt3Message {
+            content: "hello".to_string(),
+            role: "user".to_string(),
+        }];
         let result = futures::executor::block_on(gpt.ask(messages));
         assert!(result.is_ok());
         // Check that the response is correct
@@ -151,8 +179,11 @@ mod tests {
     #[test]
     fn test_ask_without_env_var() {
         std::env::remove_var("GPT3_API_KEY");
-        let gpt = GPT::new(Some(false));
-        let messages = vec![Gpt3Message { content: "hello".to_string(), role: "user".to_string() }];
+        let gpt = Gpt::new(Some(false));
+        let messages = vec![Gpt3Message {
+            content: "hello".to_string(),
+            role: "user".to_string(),
+        }];
         let result = futures::executor::block_on(gpt.ask(messages));
         assert!(result.is_err());
         // Check that the error message is correct

@@ -1,20 +1,23 @@
-mod decompose;
 mod cache;
+mod decompose;
 mod gpt3;
 
-use inquire::{Confirm};
+use inquire::Confirm;
 
 use colored::*;
 use std::env;
 
-use std::process::{Command, Stdio};
 use crate::gpt3::Gpt3Message;
+use std::process::{Command, Stdio};
 use tokio::runtime::Runtime;
 
 async fn async_main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.len().eq(&0) {
-        eprintln!("{}", "Please add description, which command you want to execute.".red());
+        eprintln!(
+            "{}",
+            "Please add description, which command you want to execute.".red()
+        );
         eprintln!("eg.: cargo run -- show calendar");
         std::process::exit(1);
     }
@@ -24,24 +27,26 @@ async fn async_main() {
     let rt = Runtime::new().unwrap();
 
     rt.block_on(async {
-        let client = gpt3::GPT::new(Some(false));
-        let response = client.ask(vec![
-            Gpt3Message {
-                content: String::from("Imagine you are linux terminal commands selector. I will describe task and you will respond only using linux command, without description, without explanation."),
-                role: String::from("system"),
-            },
-            Gpt3Message {
-                role: String::from("user"),
-                content,
-            },
-        ]).await;
+        let client = gpt3::Gpt::new(Some(false));
+        let response = client
+            .ask(vec![
+                Gpt3Message {
+                    content: gpt3::Gpt::get_system_prompt(),
+                    role: String::from("system"),
+                },
+                Gpt3Message {
+                    role: String::from("user"),
+                    content,
+                },
+            ])
+            .await;
 
-
-        if response.is_err() {
-            let error = response.unwrap_err();
+        if let Err(error) = response {
             eprintln!("{}", error.red());
-            if error == String::from("Error: GPT3_API_KEY environment variable is not defined.") {
-                eprintln!("Please set the GPT3_API_KEY environment variable to your OpenAI API key.");
+            if error == *"Error: GPT3_API_KEY environment variable is not defined." {
+                eprintln!(
+                    "Please set the GPT3_API_KEY environment variable to your OpenAI API key."
+                );
             } else {
             }
             std::process::exit(1);
@@ -61,7 +66,8 @@ async fn async_main() {
             Ok(true) => {
                 let (command_name, command_args) = decompose::decompose(command);
 
-                let mut child = Command::new(command_name).args(command_args)
+                let mut child = Command::new(command_name)
+                    .args(command_args)
                     .stdin(Stdio::inherit())
                     .stdout(Stdio::inherit())
                     .stderr(Stdio::inherit())

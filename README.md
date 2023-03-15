@@ -212,6 +212,17 @@ Stars was updated 14-03-2023
 | Engine          | text-davinci-003                      |
 | Goal            | help you remember bash commands       |
 
+| cgpt            | https://github.com/MagicCube/cli-gpt                   |
+|-----------------|--------------------------------------------------------|
+| Language        | typescript                                             |
+| Easy to install | yes                                                    |
+| Streaming       | no                                                     |
+| Stars           | 18                                                     |
+| Release         | 07-03-2023                                             |
+| Last update     | 15-03-2023                                             |
+| Engine          | gpt-3.5-turbo                                          |
+| Goal            | Translate human language to command line using ChatGPT |
+
 <a name="compilation-from-source"></a>
 
 ## Complication from source

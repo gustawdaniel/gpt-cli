@@ -1,5 +1,5 @@
-use rand::{Rng, rngs::OsRng};
 use hex::encode;
+use rand::{rngs::OsRng, Rng};
 
 pub fn get_random_hash() -> String {
     let mut rng = OsRng;

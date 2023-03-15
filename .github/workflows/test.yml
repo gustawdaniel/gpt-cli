@@ -1,0 +1,67 @@
+name: Test
+
+on:
+  push:
+    branches: [
+      "main"
+      "5-add-env-to-modify-system-prompt-and-return-output-as-standard-output-to-process-it-easy"
+    ]
+  pull_request:
+    branches: [
+      "main"
+      "5-add-env-to-modify-system-prompt-and-return-output-as-standard-output-to-process-it-easy"
+    ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Build
+#        run: cargo build --verbose
+#      - name: Run tests on main
+#        run: cargo test --verbose
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: rustfmt, clippy
+          override: true
+
+      - name: Cache cargo
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Run tests and generate coverage
+        run: |
+          export CARGO_INCREMENTAL=0
+          export RUSTFLAGS="-Zinstrument-coverage"
+          LLVM_PROFILE_FILE="gpt-cli-%p-%m.profraw" cargo test
+          zip -0 ccov.zip `find . \( -name "gpt-cli*.gc*" \) -print`
+          grcov ccov.zip -s . -t lcov --llvm --branch --ignore-not-existing --ignore "/*" -o lcov.info
+          bash <(curl -s https://codecov.io/bash) -f lcov.info
+
+      - name: Run Clippy
+        run: cargo clippy --all-features -- -D warnings
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
