@@ -23,6 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          profile: minimal
+          components: rustfmt, clippy
+          override: true
+
       - name: Install clipboard deps
         run: |
           if [[ "${{ matrix.target }}" == "x86_64-unknown-linux-musl" ]]; then
@@ -30,6 +38,8 @@ jobs:
             sudo apt install -y xorg-dev libxcb-composite0-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
           elif [[ "${{ matrix.target }}" == "x86_64-apple-darwin" ]]; then
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/runner/.bash_profile
+            eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
             brew install xcb-proto libxcb
           else
             echo "Unknown target: ${{ matrix.target }}"
@@ -45,6 +55,7 @@ jobs:
           RUSTTARGET: ${{ matrix.target }}
           EXTRA_FILES: "README.md LICENSE"
           ARCHIVE_TYPES: ${{ matrix.archive }}
+          TOOLCHAIN_VERSION: nightly
 
   release-binary:
     permissions:
