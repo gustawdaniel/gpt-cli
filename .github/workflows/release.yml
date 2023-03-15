@@ -24,7 +24,16 @@ jobs:
       - uses: actions/checkout@master
 
       - name: Install clipboard deps
-        run: sudo apt install xorg-dev libxcb-composite0-dev
+        run: |
+          if [[ "${{ matrix.target }}" == "x86_64-unknown-linux-musl" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y xorg-dev libxcb-composite0-dev
+          elif [[ "${{ matrix.target }}" == "x86_64-apple-darwin" ]]; then
+            brew install xcb-proto libxcb
+          else
+            echo "Unknown target: ${{ matrix.target }}"
+            exit 1
+          fi
 
       - name: Compile
         id: compile
@@ -62,6 +71,20 @@ jobs:
         with:
           files: |
             gpt-cli
+
+      - name: Get release ID
+        run: echo "The release ID is ${{ github.event.release.id }}"
+
+      - name: Update fallback release URL
+        run: |
+          sed -i "s|FALLBACK_RELEASE_URL=.*|FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/${{ github.event.release.id }}|" install.sh
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -a -m "Update fallback release URL to release ${{ github.event.release.id }}"
+          git push origin main
 
 #  release-plz:
 #    permissions:
