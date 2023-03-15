@@ -1,0 +1,63 @@
+name: Test
+
+on:
+  push:
+    branches-ignore:
+      - ''  # Exclude main branch if needed
+    tags-ignore:
+      - '' # Exclude annotated tags if needed
+  pull_request:
+    branches-ignore:
+      - ''  # Exclude main branch if needed
+    tags-ignore:
+      - '' # Exclude annotated tags if needed
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          profile: minimal
+          components: rustfmt, clippy
+          override: true
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Run tests
+        run: cargo test --verbose
+        env:
+          CARGO_INCREMENTAL: '0'
+          RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
+          RUSTDOCFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
+
+      - name: Install grcov
+        run: cargo install grcov
+
+      - name: Generate coverage report
+        run: |
+          zip -0 ccov.zip `find . \( -name "*.gc*" \) -print`
+          grcov ccov.zip -s . -t lcov --llvm --branch --ignore-not-existing --ignore "/*" -o lcov.info
+
+      - name: Codecov
+        uses: codecov/codecov-action@v3.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+          fail_ci_if_error: true
+          file: lcov.info
+
+      - name: Run Clippy
+        run: cargo clippy --all-features -- -D warnings
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check

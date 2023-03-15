@@ -6,10 +6,20 @@ pub fn decompose(command: &str) -> (String, Vec<String>) {
     }
     let mut parts = command.split_whitespace();
     let command_name = parts.next().unwrap_or_default().to_string();
-    let command_args: Vec<String> = command.split_whitespace().skip(1).map(|part| part.to_string()).collect();
+    let command_args: Vec<String> = command
+        .split_whitespace()
+        .skip(1)
+        .map(|part| part.to_string())
+        .collect();
     if command_args.contains(&"|".to_string()) {
-        let remaining_parts: Vec<String> = command.split_whitespace().map(|part| part.to_string()).collect();
-        return (String::from("bash"), vec!["-c".to_string(), remaining_parts.join(" ")]);
+        let remaining_parts: Vec<String> = command
+            .split_whitespace()
+            .map(|part| part.to_string())
+            .collect();
+        return (
+            String::from("bash"),
+            vec!["-c".to_string(), remaining_parts.join(" ")],
+        );
     }
     (command_name, command_args)
 }
@@ -20,10 +30,7 @@ mod tests {
 
     #[test]
     fn test_decompose_ls() {
-        assert_eq!(
-            decompose("ls"),
-            ("ls".to_string(), Vec::<String>::new())
-        );
+        assert_eq!(decompose("ls"), ("ls".to_string(), Vec::<String>::new()));
     }
 
     #[test]
@@ -46,7 +53,10 @@ mod tests {
     fn test_decompose_graphic_cards() {
         assert_eq!(
             decompose("lspci | grep VGA"),
-            ("bash".to_string(), vec!["-c".to_string(), "lspci | grep VGA".to_string()])
+            (
+                "bash".to_string(),
+                vec!["-c".to_string(), "lspci | grep VGA".to_string()]
+            )
         );
     }
 }

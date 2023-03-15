@@ -1,14 +1,10 @@
-use dirs;
-use serde_json;
 use std::collections::HashMap;
 use std::fs::{read_to_string, write};
-
 
 pub struct Cache {
     path: String,
     map: HashMap<String, String>,
 }
-
 
 impl Cache {
     pub fn new(path: Option<&str>) -> Self {
@@ -47,8 +43,8 @@ mod tests {
     mod rand_hash;
 
     use super::*;
-    use std::fs::remove_file;
     use crate::cache::tests::rand_hash::get_random_hash;
+    use std::fs::remove_file;
 
     #[test]
     fn test_new_with_path() {
