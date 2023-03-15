@@ -26,9 +26,10 @@ jobs:
       - name: Install clipboard deps
         run: |
           if [[ "${{ matrix.target }}" == "x86_64-unknown-linux-musl" ]]; then
-            sudo apt-get update
-            sudo apt-get install -y xorg-dev libxcb-composite0-dev
+            sudo apt update
+            sudo apt install -y xorg-dev libxcb-composite0-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
           elif [[ "${{ matrix.target }}" == "x86_64-apple-darwin" ]]; then
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             brew install xcb-proto libxcb
           else
             echo "Unknown target: ${{ matrix.target }}"
@@ -80,11 +81,12 @@ jobs:
           sed -i "s|FALLBACK_RELEASE_URL=.*|FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/${{ github.event.release.id }}|" install.sh
 
       - name: Commit changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git commit -a -m "Update fallback release URL to release ${{ github.event.release.id }}"
-          git push origin main
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: Daniel Gustaw
+          author_email: gustaw.daniel@gmail.com
+          message: 'updated fallback release url'
+          add: 'install.sh'
 
 #  release-plz:
 #    permissions:
