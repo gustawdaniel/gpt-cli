@@ -11,7 +11,7 @@ pub fn decompose(command: &str) -> (String, Vec<String>) {
         .skip(1)
         .map(|part| part.to_string())
         .collect();
-    if command_args.contains(&"|".to_string()) {
+    if command_args.contains(&"|".to_string()) || command_args.contains(&"&&".to_string()) {
         let remaining_parts: Vec<String> = command
             .split_whitespace()
             .map(|part| part.to_string())
@@ -56,6 +56,20 @@ mod tests {
             (
                 "bash".to_string(),
                 vec!["-c".to_string(), "lspci | grep VGA".to_string()]
+            )
+        );
+    }
+
+    #[test]
+    fn test_decompose_update_locale() {
+        assert_eq!(
+            decompose("locale-gen es_ES.UTF-8 && update-locale LANG=es_ES.UTF-8"),
+            (
+                "bash".to_string(),
+                vec![
+                    "-c".to_string(),
+                    "locale-gen es_ES.UTF-8 && update-locale LANG=es_ES.UTF-8".to_string()
+                ]
             )
         );
     }

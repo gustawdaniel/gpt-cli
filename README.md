@@ -126,7 +126,31 @@ Tools with model before `gpt-3.5-turbo` costs 10 times more.
 - [x] Interactive commands
 - [x] Colors
 - [x] Real time stream
+- [x] Overriding system context (`GPT_SYSTEM_PROMPT` env)
+- [x] Confirm, Copy and Standard Output modes (`GPT_POST` env)
 - [ ] Easy to install (in progress)
+  - [x] compilation from source
+  - [x] install by bash like nvm
+  - [ ] docker
+  - [ ] snap
+  - [ ] aur
+  - [ ] apt
+  - [ ] dnf
+
+## Exceptions
+
+If commands contains `export` or `$` it can't be correctly passed from child process to parent.
+So there is fallback applied and these commands are copied if you wanted to execute them by confirmation.
+
+Examples:
+
+```
+p change terminal language to english
+Text 'export LANG=en_US.UTF-8' was copied to your clipboard
+
+p show my current shell
+Text 'echo $SHELL' was copied to your clipboard
+```
 
 ## Constrains
 
@@ -159,14 +183,6 @@ instead
 ```bash
 sl
 ```
-
-There is problem with exporting env variables and `&&` is not supported yet. Command that will not work:
-
-| what you typing in terminal         | answers that you can copy, but not confirm by "ENTER"    | Reason                                            |
-|-------------------------------------|----------------------------------------------------------|---------------------------------------------------|
-| change language to spanish          | locale-gen es_ES.UTF-8 && update-locale LANG=es_ES.UTF-8 | no support for `&&`                               |
-| change terminal language to english | LANG=en_US.utf8                                          | env are not passed from subprocess to parent shel |
-| get my default shell                | echo $SHELL                                              | it will print $SHELL string without evaluation    |
 
 ## Star History
 

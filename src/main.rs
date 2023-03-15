@@ -11,6 +11,7 @@ use crate::gpt3::Gpt3Message;
 use std::process::{Command, Stdio};
 use tokio::runtime::Runtime;
 
+#[derive(Debug, PartialEq)]
 enum PostprocessAction {
     // default
     Confirm,
@@ -18,8 +19,8 @@ enum PostprocessAction {
     Out,
 }
 
-fn get_postprocess_action() -> PostprocessAction {
-    match std::env::var("GPT_POST") {
+fn get_postprocess_action(answer_text: &str) -> PostprocessAction {
+    let action_by_env = match env::var("GPT_POST") {
         Ok(val) => match val.as_str() {
             "confirm" => PostprocessAction::Confirm,
             "copy" => PostprocessAction::Copy,
@@ -27,11 +28,81 @@ fn get_postprocess_action() -> PostprocessAction {
             _ => PostprocessAction::Confirm,
         },
         Err(_) => PostprocessAction::Confirm,
+    };
+
+    if (answer_text.contains('$') || answer_text.starts_with("export"))
+        && action_by_env == PostprocessAction::Confirm
+    {
+        return PostprocessAction::Copy;
+    }
+
+    action_by_env
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::env;
+
+    #[test]
+    fn test_get_postprocess_action_confirm() {
+        env::remove_var("GPT_POST");
+        let answer = "This is a normal answer.".to_string();
+        let action = get_postprocess_action(&answer);
+        assert_eq!(action, PostprocessAction::Confirm);
+    }
+
+    #[test]
+    fn test_get_postprocess_action_copy() {
+        env::remove_var("GPT_POST");
+        let answer = "This is an answer containing $variable.".to_string();
+        let action = get_postprocess_action(&answer);
+        assert_eq!(action, PostprocessAction::Copy);
+    }
+
+    #[test]
+    fn test_get_postprocess_action_export() {
+        env::remove_var("GPT_POST");
+        let answer = "export MY_VARIABLE=value".to_string();
+        let action = get_postprocess_action(&answer);
+        assert_eq!(action, PostprocessAction::Copy);
+    }
+
+    #[test]
+    fn test_get_postprocess_action_env_confirm() {
+        env::set_var("GPT_POST", "confirm");
+        let answer = "This is a normal answer.".to_string();
+        let action = get_postprocess_action(&answer);
+        assert_eq!(action, PostprocessAction::Confirm);
+    }
+
+    #[test]
+    fn test_get_postprocess_action_env_copy() {
+        env::set_var("GPT_POST", "copy");
+        let answer = "This is a normal answer.".to_string();
+        let action = get_postprocess_action(&answer);
+        assert_eq!(action, PostprocessAction::Copy);
+    }
+
+    #[test]
+    fn test_get_postprocess_action_env_out() {
+        env::set_var("GPT_POST", "out");
+        let answer = "This is a normal answer.".to_string();
+        let action = get_postprocess_action(&answer);
+        assert_eq!(action, PostprocessAction::Out);
+    }
+
+    #[test]
+    fn test_get_postprocess_action_env_invalid() {
+        env::set_var("GPT_POST", "invalid");
+        let answer = "This is a normal answer.".to_string();
+        let action = get_postprocess_action(&answer);
+        assert_eq!(action, PostprocessAction::Confirm);
     }
 }
 
 fn postprocess(answer_text: &String) {
-    let action = get_postprocess_action();
+    let action = get_postprocess_action(answer_text);
 
     match action {
         PostprocessAction::Confirm => {
