@@ -30,6 +30,9 @@ jobs:
           components: rustfmt, clippy
           override: true
 
+      - name: Install clipboard deps
+        run: sudo apt install xorg-dev libxcb-composite0-dev
+
       - name: Build
         run: cargo build --verbose
 
