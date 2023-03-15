@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/95689674
+FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/95708852
 
 URL="$(wget -qO- https://api.github.com/repos/gustawdaniel/gpt-cli/releases/latest |\
  jq -r '.assets[] | select(.name=="gpt-cli").browser_download_url')"
