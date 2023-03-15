@@ -1,4 +1,3 @@
-use terminal_clipboard;
 mod cache;
 mod decompose;
 mod gpt3;
@@ -21,15 +20,13 @@ enum PostprocessAction {
 
 fn get_postprocess_action() -> PostprocessAction {
     match std::env::var("GPT_POST") {
-        Ok(val) => {
-            match val.as_str() {
-                "confirm" => PostprocessAction::Confirm,
-                "copy" => PostprocessAction::Copy,
-                "out" => PostprocessAction::Out,
-                _ => PostprocessAction::Confirm
-            }
-        }
-        Err(_) => PostprocessAction::Confirm
+        Ok(val) => match val.as_str() {
+            "confirm" => PostprocessAction::Confirm,
+            "copy" => PostprocessAction::Copy,
+            "out" => PostprocessAction::Out,
+            _ => PostprocessAction::Confirm,
+        },
+        Err(_) => PostprocessAction::Confirm,
     }
 }
 
@@ -109,7 +106,8 @@ async fn async_main() {
                 eprintln!(
                     "Please set the GPT3_API_KEY environment variable to your OpenAI API key."
                 );
-            } else {}
+            } else {
+            }
             std::process::exit(1);
         }
 
