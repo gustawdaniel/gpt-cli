@@ -85,8 +85,9 @@ jobs:
         with:
           author_name: Daniel Gustaw
           author_email: gustaw.daniel@gmail.com
-          message: 'updated fallback release url'
+          message: "updated fallback release url to ${{ github.event.release.id }}"
           add: 'install.sh'
+          push: origin HEAD:main
 
 #  release-plz:
 #    permissions:
