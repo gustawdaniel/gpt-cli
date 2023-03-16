@@ -86,8 +86,8 @@ mod tests {
 
     #[test]
     fn test_get_postprocess_action_env_out() {
-        env::set_var("GPT_POST", "out");
         let answer = "This is a normal answer.".to_string();
+        env::set_var("GPT_POST", "out");
         let action = get_postprocess_action(&answer);
         assert_eq!(action, PostprocessAction::Out);
     }
@@ -157,7 +157,7 @@ async fn async_main() {
     let rt = Runtime::new().unwrap();
 
     rt.block_on(async {
-        let client = gpt3::Gpt::new(Some(false));
+        let client = gpt3::Gpt::new(Some(false), None);
         let response = client
             .ask(vec![
                 Gpt3Message {
