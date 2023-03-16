@@ -177,7 +177,6 @@ async fn async_main() {
                 eprintln!(
                     "Please set the GPT3_API_KEY environment variable to your OpenAI API key."
                 );
-            } else {
             }
             std::process::exit(1);
         }

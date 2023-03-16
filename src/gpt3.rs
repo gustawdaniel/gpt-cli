@@ -1,6 +1,9 @@
 use crate::cache::Cache;
+use async_recursion::async_recursion;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::thread;
+use std::time::Duration;
 
 pub(crate) struct Gpt {
     debug: bool,
@@ -37,6 +40,7 @@ impl Gpt {
         }
     }
 
+    #[async_recursion]
     pub(crate) async fn ask(&self, messages: Vec<Gpt3Message>) -> Result<Gpt3Response, String> {
         if self.debug {
             let response = Gpt3Response {
@@ -83,22 +87,51 @@ impl Gpt {
             .json(&data)
             .send()
             .await
-            .map_err(|e| format!("{e}"))?
-            .json::<Gpt3Response>()
-            .await
             .map_err(|e| format!("{e}"))?;
 
-        match response.choices[0].finish_reason.as_deref() {
-            Some("stop") | Some("") | None => {
-                let response_str = serde_json::to_string(&response).unwrap();
-                cache.set(&key, &response_str);
-            }
-            Some(_) => {
-                println!("{:?}", response.choices[0]);
-            }
-        }
+        let status = response.status();
 
-        Ok(response)
+        if status.is_success() {
+            // Parse the response body
+            let json = response
+                .json::<Gpt3Response>()
+                .await
+                .map_err(|e| format!("{e}"))?;
+            // Use the parsed data
+            match json.choices[0].finish_reason.as_deref() {
+                Some("stop") | Some("") | None => {
+                    let response_str = serde_json::to_string(&json).unwrap();
+                    cache.set(&key, &response_str);
+                }
+                Some(_) => {
+                    println!("{:?}", json.choices[0]);
+                }
+            }
+
+            Ok(json)
+        } else if status == reqwest::StatusCode::TOO_MANY_REQUESTS {
+            // Get the error response body as a string
+            let error_body = response.text().await.map_err(|e| format!("{e}"))?;
+            // Parse the JSON error response
+            let error_json = serde_json::from_str::<serde_json::Value>(&error_body)
+                .map_err(|e| format!("{e}"))?;
+            // Extract the error message and recommended wait time
+            // let error_message = error_json["message"].as_str().unwrap_or_default();
+            let seconds_to_wait = error_json["seconds_to_wait"].as_u64().unwrap_or_default();
+            // Print the error message
+            // Err(format!("Request failed with status code: {}\nError message: {}\nRecommended wait time: {} seconds", status, error_message, seconds_to_wait))
+            thread::sleep(Duration::from_secs(seconds_to_wait));
+
+            self.ask(messages).await
+        } else {
+            // Get the error response body as a string
+            let error_body = response.text().await.map_err(|e| format!("{e}"))?;
+            // Print the error message
+            Err(format!(
+                "Request failed with status code: {}\nError response body: {}",
+                status, error_body
+            ))
+        }
     }
 }
 
