@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/95733898
+FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/95827057
 
 # Define a function that prints a message
 function download_binary {
