@@ -1,6 +1,7 @@
 [![Test](https://github.com/gustawdaniel/gpt-cli/actions/workflows/test.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/test.yml)
 [![Release](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml)
 [![codecov](https://codecov.io/gh/gustawdaniel/gpt-cli/branch/main/graph/badge.svg?token=KB4F1JF9W6)](https://codecov.io/gh/gustawdaniel/gpt-cli)
+![Crates.io](https://img.shields.io/crates/v/gpt-cli)
 
 # Gpt Cli
 
