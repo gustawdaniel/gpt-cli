@@ -11,6 +11,9 @@ jobs:
     container:
       image: archlinux:latest
     steps:
+      - name: Install base-devel
+        run: |
+          sudo pacman -Syu --noconfirm base-devel wget
       - name: Setup environment
         run: |
           echo "PKGVER=0.0.14" >> $GITHUB_ENV
@@ -44,10 +47,6 @@ jobs:
           ln -s "/usr/bin/gpt-cli" "\$pkgdir/usr/bin/p"
           }
           EOT
-
-      - name: Install base-devel
-        run: |
-          pacman -Syu --noconfirm base-devel
 
       - name: Generate .SRCINFO
         run: makepkg --printsrcinfo > .SRCINFO
