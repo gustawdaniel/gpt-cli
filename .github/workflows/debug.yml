@@ -36,6 +36,6 @@ jobs:
 #          TAGS: ${{ inputs.tags }}
 #          ENVIRONMENT: ${{ inputs.environment }}
       - uses: actions/checkout@master
-      - run: sudo apt install zig
+      - run: sudo snap install zig --classic --beta
       - run: cargo zigbuild --target x86_64-unknown-linux-musl --release
       - run: docker build -t gpt-cli .
