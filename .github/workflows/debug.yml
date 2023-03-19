@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - run: mkdir -p aur && cd aur
+      - run: mkdir -p aur
+      - run: cd aur
       - run: cat <<EOT >> PKGBUILD
          pkgname=gpt-cli
          pkgver=__PKGVER__
