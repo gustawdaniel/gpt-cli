@@ -15,30 +15,30 @@ jobs:
         run: |
           pacman -Syu --noconfirm base-devel wget bc git openssh
 
-      - run: mkdir -p /github/home/.ssh
-      - run: ls -la /github/home/.ssh
-      - run: |
-          cat <<EOT >> /github/home/.ssh/config
-          Host *
-              StrictHostKeyChecking no
-              UserKnownHostsFile=/dev/null
-          EOT
-      - run: sudo chmod 400 /github/home/.ssh/config
-      - run: echo "${{ secrets.ID_ED25519 }}" > /github/home/.ssh/id_ed25519
-      - run: echo "${{ secrets.ID_ED25519_PUB }}" > /github/home/.ssh/id_ed25519.pub
-      - run: chmod 600 /github/home/.ssh/id_ed25519
-      - run: git config --global user.email "gustaw.daniel@gmail.com"
-      - run: git config --global user.name "Daniel Gustaw"
-      - run: git init
-      - run: ls -la /github/home/.ssh
-      - run: whoami
-      - run: ls -la /
-      - run: ls -la /__w
-      - run: git config --global --add safe.directory /__w/gpt-cli/gpt-cli
-      - run: git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
-#      - run: git config --unset-all http.https://github.com/.extraheader
-      - run: GIT_SSH_COMMAND="ssh -i /github/home/.ssh/id_ed25519" git fetch aur master
-      - run: la -la
+#      - run: mkdir -p /github/home/.ssh
+#      - run: ls -la /github/home/.ssh
+#      - run: |
+#          cat <<EOT >> /github/home/.ssh/config
+#          Host *
+#              StrictHostKeyChecking no
+#              UserKnownHostsFile=/dev/null
+#          EOT
+#      - run: sudo chmod 400 /github/home/.ssh/config
+#      - run: echo "${{ secrets.ID_ED25519 }}" > /github/home/.ssh/id_ed25519
+#      - run: echo "${{ secrets.ID_ED25519_PUB }}" > /github/home/.ssh/id_ed25519.pub
+#      - run: chmod 600 /github/home/.ssh/id_ed25519
+#      - run: git config --global user.email "gustaw.daniel@gmail.com"
+#      - run: git config --global user.name "Daniel Gustaw"
+#      - run: git init
+#      - run: ls -la /github/home/.ssh
+#      - run: whoami
+#      - run: ls -la /
+#      - run: ls -la /__w
+#      - run: git config --global --add safe.directory /__w/gpt-cli/gpt-cli
+#      - run: git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
+##      - run: git config --unset-all http.https://github.com/.extraheader
+#      - run: GIT_SSH_COMMAND="ssh -i /github/home/.ssh/id_ed25519" git fetch aur master
+#      - run: la -la
 
       - name: Setup environment
         run: |
@@ -88,6 +88,17 @@ jobs:
           cat PKGBUILD
           cat .SRCINFO
 
-      - run: git add PKGBUILD .SRCINFO
-      - run: git commit -m "Release ${{ env.PKGVER }}-${{ env.PKGREL }}"
-      - run: GIT_SSH_COMMAND="ssh -i /github/home/.ssh/id_ed25519" git push aur HEAD:master
+#      - run: git add PKGBUILD .SRCINFO
+#      - run: git commit -m "Release ${{ env.PKGVER }}-${{ env.PKGREL }}"
+#      - run: GIT_SSH_COMMAND="ssh -i /github/home/.ssh/id_ed25519" git push aur HEAD:master
+
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
+        with:
+          pkgname: gpt-cli
+          pkgbuild: ./PKGBUILD
+          commit_username: gustawdaniel
+          commit_email: gustaw.daniel@gmail.com
+          ssh_private_key: ${{ secrets.ID_ED25519 }}
+          commit_message: Release ${{ env.PKGVER }}-${{ env.PKGREL }}
+          ssh_keyscan_types: ed25519
