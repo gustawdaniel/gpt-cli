@@ -24,7 +24,7 @@ on:
 #        required: true
 
 jobs:
-  log-the-inputs:
+  debug:
     runs-on: ubuntu-latest
     steps:
 #      - run: |
@@ -36,6 +36,7 @@ jobs:
 #          TAGS: ${{ inputs.tags }}
 #          ENVIRONMENT: ${{ inputs.environment }}
       - uses: actions/checkout@master
+      - run: sudo apt install musl-tools
 #      - run: sudo snap install zig --classic --beta
 #      - run: cargo install cargo-zigbuild
       - run: rustup target add x86_64-unknown-linux-musl
