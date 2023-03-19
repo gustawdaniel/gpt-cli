@@ -4,43 +4,14 @@ on:
   push:
     branches: ['*']
   workflow_dispatch:
-#    inputs:
-#      logLevel:
-#        description: 'Log level'
-#        required: true
-#        default: 'warning'
-#        type: choice
-#        options:
-#          - info
-#          - warning
-#          - debug
-#      tags:
-#        description: 'Test scenario tags'
-#        required: false
-#        type: boolean
-#      environment:
-#        description: 'Environment to run tests against'
-#        type: environment
-#        required: true
 
 jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
-#      - run: |
-#          echo "Log level: $LEVEL"
-#          echo "Tags: $TAGS"
-#          echo "Environment: $ENVIRONMENT"
-#        env:
-#          LEVEL: ${{ inputs.logLevel }}
-#          TAGS: ${{ inputs.tags }}
-#          ENVIRONMENT: ${{ inputs.environment }}
       - uses: actions/checkout@master
       - run: sudo apt install musl-tools
-#      - run: sudo snap install zig --classic --beta
-#      - run: cargo install cargo-zigbuild
       - run: rustup target add x86_64-unknown-linux-musl
-#      - run: cargo zigbuild --target x86_64-unknown-linux-musl --release
       - run: cargo build --target x86_64-unknown-linux-musl --release
       - run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/gpt-cli .
       - name: Login to Docker Hub

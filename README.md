@@ -40,7 +40,8 @@ After `ENTER` you will see
 
 From v0.0.8 it supports context overriding. Default system context is
 
-> Imagine you are linux terminal command selector. I will describe task, and you will respond only using linux command, without description, without explanation.
+> Imagine you are linux terminal command selector. I will describe task, and you will respond only using linux command,
+> without description, without explanation.
 
 Default postprocess mode is `confirm`. It shows answer and asking if it should be executed.
 
@@ -72,9 +73,9 @@ Possible values:
 
 - `GPT_SYSTEM_PROMPT` - any string that will explain gpt3 how to behave.
 - `GPT_POST`
-  - confirm - default, will ask if execute output in terminal
-  - copy - will copy your answer to terminal clipboard
-  - out - will print answer on standard output - usefully for further processing
+    - confirm - default, will ask if execute output in terminal
+    - copy - will copy your answer to terminal clipboard
+    - out - will print answer on standard output - usefully for further processing
 
 ## Installation
 
@@ -86,7 +87,7 @@ There are few options
 wget -qO- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
 ```
 
-it will save `gpt-cli` and alias `p` in `/usr/local/bin` so this is why it require sudo. 
+it will save `gpt-cli` and alias `p` in `/usr/local/bin` so this is why it require sudo.
 
 ### Cargo
 
@@ -111,7 +112,6 @@ git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli
 cargo build --release
 sudo cp ./target/release/gpt-cli /usr/local/bin/p
 ```
-
 
 ## Config
 
@@ -160,13 +160,13 @@ Tools with model before `gpt-3.5-turbo` costs 10 times more.
 - [x] Overriding system context (`GPT_SYSTEM_PROMPT` env)
 - [x] Confirm, Copy and Standard Output modes (`GPT_POST` env)
 - [ ] Easy to install (in progress)
-  - [x] compilation from source
-  - [x] install by bash like nvm
-  - [ ] docker
-  - [ ] snap
-  - [ ] aur
-  - [ ] apt
-  - [ ] dnf
+    - [x] compilation from source
+    - [x] install by bash like nvm
+    - [ ] docker
+    - [ ] snap
+    - [ ] aur
+    - [ ] apt
+    - [ ] dnf
 
 ## Exceptions
 
@@ -313,7 +313,12 @@ Stars was updated 14-03-2023
 
 ## GNU vs MUSL releases
 
-During compilation, you can use static linking (musl) or dynamic (g)
+During compilation, you can use static linking (musl) or dynamic (gnu). To use `terminal-clipboard` there is required
+need dynamic linking, but it works only on typical linuxes that uses libc. To make docker image small (12 MB) there is
+provided `musl` version.
+
+So to be able to use all features (support for GPT_POST=copy), I recommend to use standard `gnu` but if you need docker
+or run it on alpine then use `musl`.
 
 ## Support
 

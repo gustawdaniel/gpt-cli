@@ -5,40 +5,25 @@ on:
     types: [ created ]
 
 jobs:
-  release-binary:
+  gnu-bash:
     permissions:
       contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-
       - name: Install clipboard deps
         run: sudo apt install xorg-dev libxcb-composite0-dev
-
-      - name: Build linux binary
-        id: build
-        run: cargo build --release
-
-      - run: cp target/release/gpt-cli gpt-cli
-
-      - name: Test
-        run: ls gpt-cli
-
+      - run: cargo build --target x86_64-unknown-linux-gnu --release
+      - run: cp target/x86_64-unknown-linux-gnu/release/gpt-cli gpt-cli.gnu
       - name: Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           files: |
-            gpt-cli
-
-      - name: Get release ID
-        run: echo "The release ID is ${{ github.event.release.id }}"
-
+            gpt-cli.gnu
       - name: Update fallback release URL
-        run: |
-          sed -i "s|FALLBACK_RELEASE_URL=.*|FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/${{ github.event.release.id }}|" install.sh
-
+        run: sed -i "s|FALLBACK_RELEASE_URL=.*|FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/${{ github.event.release.id }}|" install.sh
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
@@ -48,7 +33,30 @@ jobs:
           add: 'install.sh'
           push: origin HEAD:main
 
-  release-plz:
+  musl-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: sudo apt install musl-tools
+      - run: rustup target add x86_64-unknown-linux-musl
+      - run: cargo build --target x86_64-unknown-linux-musl --release
+      - run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/gpt-cli .
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/gpt-cli
+      - run: cp target/x86_64-unknown-linux-musl/release/gpt-cli gpt-cli.musl
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          files: |
+            gpt-cli.musl
+
+  cargo:
     permissions:
       pull-requests: write
       contents: write

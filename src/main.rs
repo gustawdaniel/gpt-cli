@@ -1,6 +1,7 @@
 mod cache;
 mod decompose;
 mod gpt3;
+mod should_exit;
 
 use inquire::Confirm;
 
@@ -10,6 +11,7 @@ use std::env;
 use crate::gpt3::Gpt3Message;
 use std::process::{Command, Stdio};
 use tokio::runtime::Runtime;
+use crate::should_exit::{should_exit, ShouldExit};
 
 #[derive(Debug, PartialEq)]
 enum PostprocessAction {
@@ -149,14 +151,15 @@ fn postprocess(answer_text: &String) {
 
 async fn async_main() {
     let args: Vec<String> = env::args().skip(1).collect();
-    if args.len().eq(&0) {
-        eprintln!(
-            "{}",
-            "Please add description, which command you want to execute.".red()
-        );
-        eprintln!("eg.: cargo run -- show calendar");
+    let ShouldExit { exit, messages, is_error } = should_exit(&args);
+
+    if exit {
+        for message in messages.iter() {
+            if is_error { eprintln!("{}", message); } else { println!("{}", message) }
+        }
         std::process::exit(1);
     }
+
 
     let content = args.join(" ");
     let rt = Runtime::new().unwrap();
