@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches-ignore:
-      - ''  # Exclude main branch if needed
+      - 'main'  # Exclude main branch if needed
     tags-ignore:
       - '' # Exclude annotated tags if needed
   pull_request:
