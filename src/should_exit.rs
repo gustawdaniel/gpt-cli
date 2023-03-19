@@ -10,7 +10,7 @@ pub struct ShouldExit {
 
 pub fn should_exit(args: &Vec<String>) -> ShouldExit {
     if args.len().eq(&0) {
-        return ShouldExit { exit: true, messages: vec!["Please add description, which command you want to execute.".red(), "eg.: cargo run -- show calendar".white()], is_error: true };
+        return ShouldExit { exit: true, messages: vec!["Please add description, which command you want to execute.".red(), "eg.: p show calendar".white()], is_error: true };
     } else if args.len().eq(&1) && args.first().unwrap().eq("--version") {
         return ShouldExit { exit: true, messages: vec![VERSION.into()], is_error: false };
     }
@@ -32,7 +32,7 @@ mod tests {
         assert_eq!(result.messages.len(), 2);
         assert_eq!(result.messages[0].clone().clear().to_string().as_str(), "Please add description, which command you want to execute.");
         assert_eq!(result.messages[0].fgcolor(), Some(Color::Red));
-        assert_eq!(result.messages[1].clone().clear().to_string().as_str(), "eg.: cargo run -- show calendar");
+        assert_eq!(result.messages[1].clone().clear().to_string().as_str(), "eg.: p show calendar");
         assert_eq!(result.messages[1].fgcolor(), Some(Color::White));
     }
 

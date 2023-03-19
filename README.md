@@ -4,7 +4,7 @@
 ![Crates.io](https://img.shields.io/crates/d/gpt-cli?label=Crates.io%20downloads)
 ![Docker Pulls](https://img.shields.io/docker/pulls/gustawdaniel/gpt-cli)
 ![Crates.io](https://img.shields.io/crates/v/gpt-cli)
-
+![GitHub](https://img.shields.io/github/license/gustawdaniel/gpt-cli)
 # Gpt Cli
 
 Linux terminal GPT3 integration with killer prompt that skip descriptions and other human-readable bullshit. It shows
@@ -310,6 +310,8 @@ Stars was updated 14-03-2023
 | Last update     | 15-03-2023                                             |
 | Engine          | gpt-3.5-turbo                                          |
 | Goal            | Translate human language to command line using ChatGPT |
+
+https://github.com/asrul10/linux-command-gpt
 
 ## GNU vs MUSL releases
 

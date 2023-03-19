@@ -35,6 +35,19 @@ jobs:
           add: 'install.sh'
           push: origin HEAD:main
 
+  aur:
+    runs-on: archlinux
+    steps:
+      - uses: actions/checkout@master
+      - name: Get release information
+        run: |
+          RELEASE_TAG=${{ github.event.release.tag_name }}
+          echo "Release tag: $RELEASE_TAG"
+          echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
+      - name: Use release information
+        run: |
+          echo "Using release tag: $RELEASE_TAG"
+
   musl-docker:
     runs-on: ubuntu-latest
     steps:
