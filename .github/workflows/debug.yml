@@ -62,18 +62,16 @@ jobs:
           cat PKGBUILD
           cat .SRCINFO
 
-      - name: Setup SSH and Git
-        run: |
-          echo "${{ secrets.ID_ED25519 }}" > /github/home/.ssh/id_ed25519
-          echo "${{ secrets.ID_ED25519_PUB }}" > /github/home/.ssh/id_ed25519.pub
-          chmod 600 /github/home/.ssh/id_ed25519
-          git config --global user.email "gustaw.daniel@gmail.com"
-          git config --global user.name "Daniel Gustaw"
-          git config --unset-all http.https://github.com/.extraheader
-          git init
-          ls -la /github/home/.ssh
-          whoami
-          git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
+      - run: echo "${{ secrets.ID_ED25519 }}" > /github/home/.ssh/id_ed25519
+      - run: echo "${{ secrets.ID_ED25519_PUB }}" > /github/home/.ssh/id_ed25519.pub
+      - run: chmod 600 /github/home/.ssh/id_ed25519
+      - run: git config --global user.email "gustaw.daniel@gmail.com"
+      - run: git config --global user.name "Daniel Gustaw"
+      - run: git config --unset-all http.https://github.com/.extraheader
+      - run: git init
+      - run: ls -la /github/home/.ssh
+      - run: whoami
+      - run: git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
 
       - name: Commit and push
         run: |
