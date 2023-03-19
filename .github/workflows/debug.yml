@@ -36,7 +36,7 @@ jobs:
       - run: ls -la /__w
       - run: git config --global --add safe.directory /__w/gpt-cli/gpt-cli
       - run: git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
-      - run: git config --unset-all http.https://github.com/.extraheader
+#      - run: git config --unset-all http.https://github.com/.extraheader
       - run: GIT_SSH_COMMAND="ssh -i /github/home/.ssh/id_ed25519" git fetch aur master
       - run: la -la
 
