@@ -69,9 +69,12 @@ jobs:
       - run: git config --global user.email "gustaw.daniel@gmail.com"
       - run: git config --global user.name "Daniel Gustaw"
       - run: git init
-      - run: git config --unset-all http.https://github.com/.extraheader
+#      - run: git config --unset-all http.https://github.com/.extraheader
       - run: ls -la /github/home/.ssh
       - run: whoami
+      - run: ls -la /
+      - run: ls -la /__w
+      - run: git config --global --add safe.directory /__w/gpt-cli/gpt-cli
       - run: git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
 
       - name: Commit and push
