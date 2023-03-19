@@ -36,17 +36,80 @@ jobs:
           push: origin HEAD:main
 
   aur:
-    runs-on: archlinux
+    needs: gnu-bash
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
     steps:
-      - uses: actions/checkout@master
+      - name: Install base-devel
+        run: |
+          pacman -Syu --noconfirm base-devel wget bc
       - name: Get release information
         run: |
-          RELEASE_TAG=${{ github.event.release.tag_name }}
+          RELEASE_TAG=$(echo ${{ github.event.release.tag_name }} | sed "s|v||")
           echo "Release tag: $RELEASE_TAG"
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
       - name: Use release information
         run: |
           echo "Using release tag: $RELEASE_TAG"
+      - name: Setup environment
+        run: |
+          echo "PKGVER=${{ env.RELEASE_TAG }}" >> $GITHUB_ENV
+          echo "PKGREL=$(echo "1+$(curl "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=gpt-cli" | head -n 3 | tail -n 1 | cut -d "=" -f 2)" | bc)" >> $GITHUB_ENV
+      - run: echo ${{ env.PKGVER }}
+      - name: Setup environment2
+        run: |
+          wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli.gnu" -O gpt-cli.gnu
+          echo "CHECKSUM=$(sha512sum gpt-cli.gnu | cut -d " " -f 1)" >> $GITHUB_ENV
+
+      - name: Prepare PKGBUILD
+        run: |
+          cat <<EOT >> PKGBUILD
+          pkgname=gpt-cli
+          pkgver=${{ env.PKGVER }}
+          pkgrel=${{ env.PKGREL }}
+          pkgdesc="Run linux commands with natural language. Eg 'show my graphic card' instead 'lspci | grep VGA'"
+          arch=('x86_64')
+          url="https://github.com/gustawdaniel/gpt-cli"
+          license=('MIT')
+          depends=('xorg-server-devel' 'libxcb')
+          options=()
+          source_x86_64=("https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli.gnu")
+          sha512sums_x86_64=('${{ env.CHECKSUM }}')
+          
+          package() {
+          # Install the binary
+          install -Dm755 "\$srcdir/gpt-cli" "\$pkgdir/usr/bin/gpt-cli"
+          
+          # Create a symbolic link
+          ln -s "/usr/bin/gpt-cli" "\$pkgdir/usr/bin/p"
+          }
+          EOT
+
+      - name: Generate .SRCINFO
+        run: |
+          useradd -m builduser
+          passwd -d builduser
+          echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
+          chown -R builduser:builduser .
+          sudo -u builduser bash -c "makepkg --printsrcinfo > .SRCINFO"
+
+      - name: Show files
+        run: |
+          ls -la
+          cat PKGBUILD
+          cat .SRCINFO
+
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
+        with:
+          pkgname: gpt-cli
+          pkgbuild: ./PKGBUILD
+          commit_username: gustawdaniel
+          commit_email: gustaw.daniel@gmail.com
+          ssh_private_key: ${{ secrets.ID_ED25519 }}
+          commit_message: Release ${{ env.PKGVER }}-${{ env.PKGREL }}
+          ssh_keyscan_types: ed25519
 
   musl-docker:
     runs-on: ubuntu-latest
