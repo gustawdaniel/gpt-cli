@@ -9,9 +9,9 @@ use colored::*;
 use std::env;
 
 use crate::gpt3::Gpt3Message;
+use crate::should_exit::{should_exit, ShouldExit};
 use std::process::{Command, Stdio};
 use tokio::runtime::Runtime;
-use crate::should_exit::{should_exit, ShouldExit};
 
 #[derive(Debug, PartialEq)]
 enum PostprocessAction {
@@ -151,15 +151,22 @@ fn postprocess(answer_text: &String) {
 
 async fn async_main() {
     let args: Vec<String> = env::args().skip(1).collect();
-    let ShouldExit { exit, messages, is_error } = should_exit(&args);
+    let ShouldExit {
+        exit,
+        messages,
+        is_error,
+    } = should_exit(&args);
 
     if exit {
         for message in messages.iter() {
-            if is_error { eprintln!("{}", message); } else { println!("{}", message) }
+            if is_error {
+                eprintln!("{}", message);
+            } else {
+                println!("{}", message)
+            }
         }
         std::process::exit(1);
     }
-
 
     let content = args.join(" ");
     let rt = Runtime::new().unwrap();
