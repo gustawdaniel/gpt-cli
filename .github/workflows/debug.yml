@@ -7,7 +7,9 @@ on:
 
 jobs:
   debug:
-    runs-on: archlinux
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
     steps:
       - name: Setup environment
         run: |
@@ -42,6 +44,10 @@ jobs:
           ln -s "/usr/bin/gpt-cli" "\$pkgdir/usr/bin/p"
           }
           EOT
+
+      - name: Install base-devel
+        run: |
+          pacman -Syu --noconfirm base-devel
 
       - name: Generate .SRCINFO
         run: makepkg --printsrcinfo > .SRCINFO
