@@ -1,6 +1,8 @@
 [![Test](https://github.com/gustawdaniel/gpt-cli/actions/workflows/test.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/test.yml)
 [![Release](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml)
 [![codecov](https://codecov.io/gh/gustawdaniel/gpt-cli/branch/main/graph/badge.svg?token=KB4F1JF9W6)](https://codecov.io/gh/gustawdaniel/gpt-cli)
+![Crates.io](https://img.shields.io/crates/d/gpt-cli?label=Crates.io%20downloads)
+![Docker Pulls](https://img.shields.io/docker/pulls/gustawdaniel/gpt-cli)
 ![Crates.io](https://img.shields.io/crates/v/gpt-cli)
 
 # Gpt Cli
@@ -76,12 +78,40 @@ Possible values:
 
 ## Installation
 
+There are few options
+
+### Shell
+
 ```
 wget -qO- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
 ```
 
-it will save `gpt-cli` and alias `p` in `/usr/local/bin` so this is why it require sudo. You can
-also [compile it yourself](#compilation-from-source).
+it will save `gpt-cli` and alias `p` in `/usr/local/bin` so this is why it require sudo. 
+
+### Cargo
+
+```
+cargo install gpt-cli
+ln -s ~/.cargo/bin/gpt-cli ~/.cargo/bin/p
+```
+
+### Docker
+
+```
+alias p="docker run -v ~/.gpt-cache.json:/.gpt-cache.json -e GPT3_API_KEY=${GPT3_API_KEY} gustawdaniel/gpt-cli"
+```
+
+In Docker, you can't use flag `GPT_POST` and it is automatically set as `out`. It means that you can't confirm command
+by `ENTER` and commands will not be copied to your clipboard.
+
+## Complication from source
+
+```
+git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli 
+cargo build --release
+sudo cp ./target/release/gpt-cli /usr/local/bin/p
+```
+
 
 ## Config
 
@@ -281,15 +311,9 @@ Stars was updated 14-03-2023
 | Engine          | gpt-3.5-turbo                                          |
 | Goal            | Translate human language to command line using ChatGPT |
 
-<a name="compilation-from-source"></a>
+## GNU vs MUSL releases
 
-## Complication from source
-
-```
-git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli 
-cargo build --release
-sudo cp ./target/release/gpt-cli /usr/local/bin/p
-```
+During compilation, you can use static linking (musl) or dynamic (g)
 
 ## Support
 
