@@ -9,65 +9,58 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
-      - run: cat <<EOT >> PKGBUILD
-         pkgname=gpt-cli
-         pkgver=__PKGVER__
-         pkgrel=__PKGREL__
-         pkgdesc="Run linux commands with natural language. Eg 'show my graphic card' instead 'lspci | grep VGA'"
-         arch=('x86_64')
-         url="https://github.com/gustawdaniel/gpt-cli"
-         license=('MIT')
-         depends=('xorg-server-devel' 'libxcb')
-         options=()
-         source_x86_64=("https://github.com/gustawdaniel/gpt-cli/releases/download/v__PKGVER__/gpt-cli.gnu")
-         sha512sums_x86_64=('__CHECKSUM__')
-         
-         package() {
-         # Install the binary
-         install -Dm755 "$srcdir/gpt-cli" "$pkgdir/usr/bin/gpt-cli"
-         
-         # Create a symbolic link
-         ln -s "/usr/bin/gpt-cli" "$pkgdir/usr/bin/p"
-         }
-         EOT
-      - name: Get pkgver
+      - name: Setup environment
         run: |
-          $PKGVER=0.0.14
-          echo "PKGVER=$PKGVER" >> $GITHUB_ENV
-      - name: Set pkgver
+          echo "PKGVER=0.0.14" >> $GITHUB_ENV
+          echo "PKGREL=$(echo "1+$(curl "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=gpt-cli" | head -n 3 | tail -n 1 | cut -d "=" -f 2)" | bc)" >> $GITHUB_ENV
+          wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli.gnu" -O gpt-cli.gnu
+          echo "CHECKSUM=$(sha512sum gpt-cli.gnu | cut -d " " -f 1)" >> $GITHUB_ENV
+
+      - name: Prepare PKGBUILD
         run: |
-#          sed -i "s|__PKGVER__|${{ github.event.release.tag_name }}|g" PKGBUILD
-          sed -i "s|__PKGVER__|${PKGVER}|g" PKGBUILD
-      - name: Get pkgrel
-        run: |
-          $PKGREL=echo "1+$(curl "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=gpt-cli" | head -n 3 | tail -n 1 | cut -d "=" -f 2)" | bc
-          echo "PKGREL=$PKGREL" >> $GITHUB_ENV
-      - name: Set pkgrel
-        run: sed -i "s|__PKGREL__|${PKGREL}|g" PKGBUILD
-      - name: Get checksum
-        run:
-          wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${PKGVER}/gpt-cli.gnu" -O gpt-cli.gnu
-          $CHECKSUM=sha512sum gpt-cli.gnu | cut -d " " -f 1
-          echo "CHECKSUM=$CHECKSUM" >> $GITHUB_ENV
-      - name: Set checksum
-        run: sed -i "s|__CHECKSUM__|${CHECKSUM}|g" PKGBUILD
+          cat <<EOT >> PKGBUILD
+          pkgname=gpt-cli
+          pkgver=${{ env.PKGVER }}
+          pkgrel=${{ env.PKGREL }}
+          pkgdesc="Run linux commands with natural language. Eg 'show my graphic card' instead 'lspci | grep VGA'"
+          arch=('x86_64')
+          url="https://github.com/gustawdaniel/gpt-cli"
+          license=('MIT')
+          depends=('xorg-server-devel' 'libxcb')
+          options=()
+          source_x86_64=("https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli.gnu")
+          sha512sums_x86_64=('${{ env.CHECKSUM }}')
+          
+          package() {
+          # Install the binary
+          install -Dm755 "\$srcdir/gpt-cli" "\$pkgdir/usr/bin/gpt-cli"
+          
+          # Create a symbolic link
+          ln -s "/usr/bin/gpt-cli" "\$pkgdir/usr/bin/p"
+          }
+          EOT
+
       - name: Generate .SRCINFO
         run: makepkg --printsrcinfo > .SRCINFO
-      - run: ls -la
-      - run: cat PKGBUILD
-      - run: cat .SRCINFO
-      - run: echo ${{ secrets.ID_ED25519 }} > ~/.ssh/id_ed25519
-      - run: echo ${{ secrets.ID_ED25519_PUB }} > ~/.ssh/id_ed25519.pub
-      - run: git init
-      - run: git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
-      - run: git commit -a -m "Release ${PKGVER}-${PKGREL}"
-#      - run: git push master
 
+      - name: Show files
+        run: |
+          ls -la
+          cat PKGBUILD
+          cat .SRCINFO
 
-#      - get __PKGREL__
-#      - set __PKGREL__
-#      - compute __CHECKSUM__
-#      - set __CHECKSUM__
-#      - build .SRCINFO
-#      - login by git
-#      - push to git
+      - name: Setup SSH and Git
+        run: |
+          echo "${{ secrets.ID_ED25519 }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.ID_ED25519_PUB }}" > ~/.ssh/id_ed25519.pub
+          chmod 600 ~/.ssh/id_ed25519
+          git config --global user.email "gustaw.daniel@gmail.com"
+          git config --global user.name "Daniel Gustaw"
+          git init
+          git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
+
+      - name: Commit and push
+        run: |
+          git add PKGBUILD .SRCINFO
+          git commit -m "Release ${{ env.PKGVER }}-${{ env.PKGREL }}"
+          git push aur HEAD:master
