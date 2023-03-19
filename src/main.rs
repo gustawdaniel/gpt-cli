@@ -123,18 +123,23 @@ fn postprocess(answer_text: &String) {
                         .spawn()
                         .expect("Failed to execute command");
 
-                    let _ = child.wait().expect("Failed to wait for command");
-
-                    // println!("Command exited with status: {}", _);
+                    child.wait().expect("Failed to wait for command");
                 }
                 Ok(false) => println!("That's too bad, I've heard great things about it."),
                 Err(_) => println!("Error with questionnaire, try again later"),
             }
         }
         PostprocessAction::Copy => {
-            terminal_clipboard::set_string(answer_text).unwrap();
-            assert_eq!(*answer_text, terminal_clipboard::get_string().unwrap());
-            println!("Text '{answer_text}' was copied to your clipboard")
+            #[cfg(not(target_env = "musl"))]
+            {
+                terminal_clipboard::set_string(answer_text).unwrap();
+                assert_eq!(*answer_text, terminal_clipboard::get_string().unwrap());
+                println!("Text '{answer_text}' was copied to your clipboard")
+            }
+            #[cfg(target_env = "musl")]
+            {
+                println!("{}", answer_text);
+            }
         }
         PostprocessAction::Out => {
             println!("{}", answer_text);
