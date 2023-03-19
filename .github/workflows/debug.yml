@@ -13,7 +13,10 @@ jobs:
         run: |
           echo "PKGVER=0.0.14" >> $GITHUB_ENV
           echo "PKGREL=$(echo "1+$(curl "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=gpt-cli" | head -n 3 | tail -n 1 | cut -d "=" -f 2)" | bc)" >> $GITHUB_ENV
-          wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${PKGVER}/gpt-cli" -O gpt-cli.gnu
+      - run: echo ${{ env.PKGVER }}
+      - name: Setup environment2
+        run: |
+          wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli" -O gpt-cli.gnu
           echo "CHECKSUM=$(sha512sum gpt-cli.gnu | cut -d " " -f 1)" >> $GITHUB_ENV
 
       - name: Prepare PKGBUILD
