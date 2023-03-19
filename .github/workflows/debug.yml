@@ -69,7 +69,10 @@ jobs:
           chmod 600 /github/home/.ssh/id_ed25519
           git config --global user.email "gustaw.daniel@gmail.com"
           git config --global user.name "Daniel Gustaw"
+          git config --unset-all http.https://github.com/.extraheader
           git init
+          ls -la /github/home/.ssh
+          whoami
           git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
 
       - name: Commit and push
