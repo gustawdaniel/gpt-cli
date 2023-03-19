@@ -5,6 +5,7 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/gustawdaniel/gpt-cli)
 ![Crates.io](https://img.shields.io/crates/v/gpt-cli)
 ![GitHub](https://img.shields.io/github/license/gustawdaniel/gpt-cli)
+
 # Gpt Cli
 
 Linux terminal GPT3 integration with killer prompt that skip descriptions and other human-readable bullshit. It shows
@@ -164,7 +165,7 @@ Tools with model before `gpt-3.5-turbo` costs 10 times more.
     - [x] install by bash like nvm
     - [x] docker
     - [ ] snap
-    - [ ] aur
+    - [x] aur
     - [ ] apt
     - [ ] dnf
 
@@ -311,7 +312,16 @@ Stars was updated 14-03-2023
 | Engine          | gpt-3.5-turbo                                          |
 | Goal            | Translate human language to command line using ChatGPT |
 
-https://github.com/asrul10/linux-command-gpt
+| linux-command-gpt | https://github.com/asrul10/linux-command-gpt                      |
+|-------------------|-------------------------------------------------------------------|
+| Language          | go                                                                |
+| Easy to install   | no                                                                |
+| Streaming         | yes                                                               |
+| Stars             | 54                                                                |
+| Release           | 12-03-2023                                                        |
+| Last update       | 19-03-2023                                                        |
+| Engine            | gpt-3.5-turbo                                                     |
+| Goal              | Get Linux commands in natural language with the power of ChatGPT. |
 
 ## GNU vs MUSL releases
 
