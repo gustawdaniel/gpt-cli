@@ -49,7 +49,12 @@ jobs:
           EOT
 
       - name: Generate .SRCINFO
-        run: makepkg --printsrcinfo > .SRCINFO
+        run: |
+          useradd -m builduser
+          passwd -d builduser
+          echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
+          chown -R builduser:builduser .
+          sudo -u builduser bash -c "makepkg --printsrcinfo > .SRCINFO"
 
       - name: Show files
         run: |
