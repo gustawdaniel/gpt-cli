@@ -7,7 +7,7 @@ on:
 
 jobs:
   debug:
-    runs-on: ubuntu-latest
+    runs-on: archlinux
     steps:
       - name: Setup environment
         run: |
