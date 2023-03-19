@@ -64,9 +64,11 @@ jobs:
 
       - run: mkdir -p /github/home/.ssh
 
-      - name: Add known host
-        run: |
-          echo 'aur.archlinux.org ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDM1We1tROGx+WRp6hAfW7t8il22SfLwzkK/GvFqWd8JfD4WrK4tQEKLiONdJsiG8rNCKOObQw2NlIuR87kNp9/9y7ZFpGU+r3d59zKb1D0iTJ7U+lLZjKd6Ugm9XzoACx7SCoK5J5V5Q2r+I/xQwF7aHnLqrJcRgB4j4n4u4pT8zW9zf9p3I3+q3qig2YYTgJhL+w+H7RfAdMj2gW6d/9v1Bxi/5yY6U8W6UZ/xvUO3Lq3sx6j8V7yX5+5D5J1u5F1bMsfZu0AaGk7+sLm6Kj7Vd42vfeDZR7Vr5r5ibl7Ku+cFZQ2QENu5iZ8QGLHWXgMj+mVV6iRFBzH8U6WjUv' >> ~/.ssh/known_hosts
+#      - name: Add known host
+#        run: |
+#          echo 'aur.archlinux.org ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDM1We1tROGx+WRp6hAfW7t8il22SfLwzkK/GvFqWd8JfD4WrK4tQEKLiONdJsiG8rNCKOObQw2NlIuR87kNp9/9y7ZFpGU+r3d59zKb1D0iTJ7U+lLZjKd6Ugm9XzoACx7SCoK5J5V5Q2r+I/xQwF7aHnLqrJcRgB4j4n4u4pT8zW9zf9p3I3+q3qig2YYTgJhL+w+H7RfAdMj2gW6d/9v1Bxi/5yY6U8W6UZ/xvUO3Lq3sx6j8V7yX5+5D5J1u5F1bMsfZu0AaGk7+sLm6Kj7Vd42vfeDZR7Vr5r5ibl7Ku+cFZQ2QENu5iZ8QGLHWXgMj+mVV6iRFBzH8U6WjUv' >> ~/.ssh/known_hosts
+
+      - run: ssh -o StrictHostKeyChecking=no aur.archlinux.org
 
       - run: echo "${{ secrets.ID_ED25519 }}" > /github/home/.ssh/id_ed25519
       - run: echo "${{ secrets.ID_ED25519_PUB }}" > /github/home/.ssh/id_ed25519.pub
