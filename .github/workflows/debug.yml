@@ -9,9 +9,6 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - run: mkdir -p aur
-      - run: cd aur
       - run: cat <<EOT >> PKGBUILD
          pkgname=gpt-cli
          pkgver=__PKGVER__
@@ -56,8 +53,8 @@ jobs:
         run: sed -i "s|__CHECKSUM__|${CHECKSUM}|g" PKGBUILD
       - name: Generate .SRCINFO
         run: makepkg --printsrcinfo > .SRCINFO
+      - run: ls -la
       - run: cat PKGBUILD
-      - run: cat .SRCINFO
       - run: cat .SRCINFO
       - run: echo ${{ secrets.ID_ED25519 }} > ~/.ssh/id_ed25519
       - run: echo ${{ secrets.ID_ED25519_PUB }} > ~/.ssh/id_ed25519.pub
