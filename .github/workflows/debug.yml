@@ -68,7 +68,7 @@ jobs:
       - run: chmod 600 /github/home/.ssh/id_ed25519
       - run: git config --global user.email "gustaw.daniel@gmail.com"
       - run: git config --global user.name "Daniel Gustaw"
-      - run: git config --unset-all http.https://github.com/.extraheader
+#      - run: git config --unset-all http.https://github.com/.extraheader
       - run: git init
       - run: ls -la /github/home/.ssh
       - run: whoami
