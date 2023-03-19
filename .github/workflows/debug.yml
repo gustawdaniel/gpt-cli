@@ -38,5 +38,6 @@ jobs:
       - uses: actions/checkout@master
       - run: sudo snap install zig --classic --beta
       - run: cargo install cargo-zigbuild
+      - run: rustup target add x86_64-unknown-linux-musl
       - run: cargo zigbuild --target x86_64-unknown-linux-musl --release
       - run: docker build -t gpt-cli .
