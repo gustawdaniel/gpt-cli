@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Install base-devel
         run: |
-          pacman -Syu --noconfirm base-devel wget bc
+          pacman -Syu --noconfirm base-devel wget bc git
       - name: Setup environment
         run: |
           echo "PKGVER=0.0.14" >> $GITHUB_ENV
