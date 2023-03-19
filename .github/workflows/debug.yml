@@ -14,6 +14,32 @@ jobs:
       - name: Install base-devel
         run: |
           pacman -Syu --noconfirm base-devel wget bc git openssh
+
+      - run: mkdir -p /github/home/.ssh
+      - run: ls -la /github/home/.ssh
+      - run: |
+          cat <<EOT >> /github/home/.ssh/config
+          Host *
+              StrictHostKeyChecking no
+              UserKnownHostsFile=/dev/null
+          EOT
+      - run: sudo chmod 400 /github/home/.ssh/config
+      - run: echo "${{ secrets.ID_ED25519 }}" > /github/home/.ssh/id_ed25519
+      - run: echo "${{ secrets.ID_ED25519_PUB }}" > /github/home/.ssh/id_ed25519.pub
+      - run: chmod 600 /github/home/.ssh/id_ed25519
+      - run: git config --global user.email "gustaw.daniel@gmail.com"
+      - run: git config --global user.name "Daniel Gustaw"
+      - run: git init
+      #      - run: git config --unset-all http.https://github.com/.extraheader
+      - run: ls -la /github/home/.ssh
+      - run: whoami
+      - run: ls -la /
+      - run: ls -la /__w
+      - run: git config --global --add safe.directory /__w/gpt-cli/gpt-cli
+      - run: git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
+      - run: git fetch aur master
+      - run: la -la
+
       - name: Setup environment
         run: |
           echo "PKGVER=0.0.14" >> $GITHUB_ENV
@@ -26,7 +52,7 @@ jobs:
 
       - name: Prepare PKGBUILD
         run: |
-          cat <<EOT >> PKGBUILD
+          cat <<EOT > PKGBUILD
           pkgname=gpt-cli
           pkgver=${{ env.PKGVER }}
           pkgrel=${{ env.PKGREL }}
@@ -62,31 +88,6 @@ jobs:
           cat PKGBUILD
           cat .SRCINFO
 
-      - run: mkdir -p /github/home/.ssh
-      - run: ls -la /github/home/.ssh
-      - run: |
-          cat <<EOT >> /github/home/.ssh/config
-          Host *
-              StrictHostKeyChecking no
-              UserKnownHostsFile=/dev/null
-          EOT
-      - run: sudo chmod 400 /github/home/.ssh/config
-      - run: echo "${{ secrets.ID_ED25519 }}" > /github/home/.ssh/id_ed25519
-      - run: echo "${{ secrets.ID_ED25519_PUB }}" > /github/home/.ssh/id_ed25519.pub
-      - run: chmod 600 /github/home/.ssh/id_ed25519
-      - run: git config --global user.email "gustaw.daniel@gmail.com"
-      - run: git config --global user.name "Daniel Gustaw"
-      - run: git init
-#      - run: git config --unset-all http.https://github.com/.extraheader
-      - run: ls -la /github/home/.ssh
-      - run: whoami
-      - run: ls -la /
-      - run: ls -la /__w
-      - run: git config --global --add safe.directory /__w/gpt-cli/gpt-cli
-      - run: git remote add aur ssh://aur@aur.archlinux.org/gpt-cli.git
-
-      - name: Commit and push
-        run: |
-          git add PKGBUILD .SRCINFO
-          git commit -m "Release ${{ env.PKGVER }}-${{ env.PKGREL }}"
-          git push aur HEAD:master
+      - run: git add PKGBUILD .SRCINFO
+      - run: git commit -m "Release ${{ env.PKGVER }}-${{ env.PKGREL }}"
+      - run: git push aur HEAD:master
