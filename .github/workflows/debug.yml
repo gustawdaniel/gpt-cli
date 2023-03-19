@@ -2,7 +2,7 @@ name: Debug
 
 on:
   push:
-    branches: ['all']
+    branches: ['*']
   workflow_dispatch:
 #    inputs:
 #      logLevel:
