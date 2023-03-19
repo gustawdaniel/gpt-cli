@@ -1,6 +1,8 @@
 name: Debug
 
 on:
+  push:
+    branches: ['all']
   workflow_dispatch:
 #    inputs:
 #      logLevel:
