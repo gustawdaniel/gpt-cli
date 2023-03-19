@@ -34,6 +34,7 @@ jobs:
           message: "updated fallback release url to ${{ github.event.release.id }}"
           add: 'install.sh'
           push: origin HEAD:main
+          tag_push: '--force'
 
   aur:
     needs: gnu-bash
@@ -138,22 +139,33 @@ jobs:
             gpt-cli.musl.sha256.txt
 
   cargo:
-    permissions:
-      pull-requests: write
-      contents: write
-    name: Release-plz
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-      - name: Run release-plz
-        uses: MarcoIeni/release-plz-action@v0.4
-        with:
-          command: release
+      - uses: actions/checkout@master
+      - name: Install clipboard deps
+        run: sudo apt install xorg-dev libxcb-composite0-dev
+      - run: cargo build --target x86_64-unknown-linux-gnu --release
+      - run: cargo publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+#  cargo:
+#    permissions:
+#      pull-requests: write
+#      contents: write
+#    name: Release-plz
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#      - name: Install Rust toolchain
+#        uses: dtolnay/rust-toolchain@stable
+#      - name: Run release-plz
+#        uses: MarcoIeni/release-plz-action@v0.4
+#        with:
+#          command: release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

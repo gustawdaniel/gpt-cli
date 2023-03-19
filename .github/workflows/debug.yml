@@ -14,3 +14,5 @@ jobs:
         run: sudo apt install xorg-dev libxcb-composite0-dev
       - run: cargo build --target x86_64-unknown-linux-gnu --release
       - run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
