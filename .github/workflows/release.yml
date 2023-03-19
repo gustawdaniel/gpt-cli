@@ -15,6 +15,7 @@ jobs:
         run: sudo apt install xorg-dev libxcb-composite0-dev
       - run: cargo build --target x86_64-unknown-linux-gnu --release
       - run: cp target/x86_64-unknown-linux-gnu/release/gpt-cli gpt-cli.gnu
+      - run: shasum -a 256 gpt-cli.gnu | cut -d " " -f 1 > gpt-cli.gnu.sha256.txt
       - name: Release
         uses: softprops/action-gh-release@v1
         env:
@@ -22,6 +23,7 @@ jobs:
         with:
           files: |
             gpt-cli.gnu
+            gpt-cli.gnu.sha256.txt
       - name: Update fallback release URL
         run: sed -i "s|FALLBACK_RELEASE_URL=.*|FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/${{ github.event.release.id }}|" install.sh
       - name: Commit changes
@@ -47,7 +49,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/gpt-cli
+
       - run: cp target/x86_64-unknown-linux-musl/release/gpt-cli gpt-cli.musl
+      - run: shasum -a 256 gpt-cli.musl | cut -d " " -f 1 > gpt-cli.musl.sha256.txt
       - name: Release
         uses: softprops/action-gh-release@v1
         env:
@@ -55,6 +59,7 @@ jobs:
         with:
           files: |
             gpt-cli.musl
+            gpt-cli.musl.sha256.txt
 
   cargo:
     permissions:

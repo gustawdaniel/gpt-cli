@@ -162,7 +162,7 @@ Tools with model before `gpt-3.5-turbo` costs 10 times more.
 - [ ] Easy to install (in progress)
     - [x] compilation from source
     - [x] install by bash like nvm
-    - [ ] docker
+    - [x] docker
     - [ ] snap
     - [ ] aur
     - [ ] apt
