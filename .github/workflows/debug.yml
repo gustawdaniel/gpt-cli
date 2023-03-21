@@ -20,4 +20,5 @@ jobs:
           path: ${{ steps.snapcraft.outputs.snap }}
       - run: |
           sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }} --classic
+      - run: alias p=gpt-cli
       - run: ./test_version.sh

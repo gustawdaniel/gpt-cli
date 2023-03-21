@@ -2,7 +2,7 @@
 
 testEquality() {
   RES=$(grep -E "^version" Cargo.toml | cut -d "\"" -f 2)
-  EXP=$(p --version)
+  EXP=$(gpt-cli --version)
   assertEquals "${EXP}" "${RES}"
 }
 
