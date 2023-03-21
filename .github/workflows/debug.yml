@@ -20,5 +20,4 @@ jobs:
           path: ${{ steps.snapcraft.outputs.snap }}
       - run: |
           sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
-#           do something with the snap
       - run: ./test_version.sh
