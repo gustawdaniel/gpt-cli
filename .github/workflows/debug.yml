@@ -1,18 +1,24 @@
 name: Debug
 
 on:
-#  push:
-#    branches: ['*']
+  push:
+    branches: ['*']
   workflow_dispatch:
 
 jobs:
-  debug:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: Install clipboard deps
-        run: sudo apt install xorg-dev libxcb-composite0-dev
-      - run: cargo build --target x86_64-unknown-linux-gnu --release
-#      - run: cargo publish
-#        env:
-#          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - uses: actions/checkout@v3
+      - name: Install shunit
+        run: sudo apt install -y shunit2
+      - uses: snapcore/action-build@v1
+        id: snapcraft
+      - uses: actions/upload-artifact@v3
+        with:
+          name: snap
+          path: ${{ steps.snapcraft.outputs.snap }}
+      - run: |
+          sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }} --classic
+      - run: alias p=gpt-cli
+      - run: ./test_version.sh

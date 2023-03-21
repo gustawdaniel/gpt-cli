@@ -1,0 +1,33 @@
+name: gpt-cli
+version: git
+summary: Commands with natural language. Like "show graphic card" no "lspci | grep VGA"
+description: Linux terminal GPT3 integration with killer prompt that skip descriptions and human-readable comments. It shows you commands that can be executed by ENTER.
+
+base: core20
+confinement: classic
+grade: devel
+
+parts:
+  gpt-cli:
+    plugin: rust
+    source: .
+    build-packages:
+      - libxcb1-dev
+      - libxcb-render0-dev
+      - libxcb-shape0-dev
+      - libxcb-xfixes0-dev
+    stage-packages:
+      - libxau6
+      - libxcb-render0
+      - libxcb-shape0
+      - libxcb-xfixes0
+      - libxcb1
+      - libxdmcp6
+
+apps:
+  gpt-cli:
+    command: bin/gpt-cli
+    plugs:
+      - network
+      - network-bind
+      - process-control

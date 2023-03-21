@@ -80,7 +80,7 @@ jobs:
           
           package() {
           # Install the binary
-          install -Dm755 "\$srcdir/gpt-cli" "\$pkgdir/usr/bin/gpt-cli"
+          install -Dm755 "\$srcdir/gpt-cli.gnu" "\$pkgdir/usr/bin/gpt-cli"
           
           # Create a symbolic link
           ln -s "/usr/bin/gpt-cli" "\$pkgdir/usr/bin/p"
