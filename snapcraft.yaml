@@ -23,13 +23,7 @@ parts:
       - libxcb-xfixes0
       - libxcb1
       - libxdmcp6
-#    build-packages:
-#      - xorg-dev
-#      - libxcb-composite0-dev
-#      - libxcb1-dev
-#      - libxcb-render0-dev
-#      - libxcb-shape0-dev
-#      - libxcb-xfixes0-dev
+
 apps:
   gpt-cli:
     command: bin/gpt-cli
