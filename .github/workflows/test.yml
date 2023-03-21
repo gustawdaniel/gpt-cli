@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches-ignore:
-      - ''  # Exclude main branch if needed
+      - 'main'  # Exclude main branch if needed
     tags-ignore:
       - '' # Exclude annotated tags if needed
   pull_request:
@@ -64,3 +64,26 @@ jobs:
 
       - name: Check formatting
         run: cargo fmt --all -- --check
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          profile: minimal
+          components: rustfmt, clippy
+          override: true
+
+      - name: Install clipboard deps
+        run: sudo apt install xorg-dev libxcb-composite0-dev shunit2
+
+      - name: Install
+        run: ./install.sh --local
+
+      - name: Check version
+        run: ./test_version.sh

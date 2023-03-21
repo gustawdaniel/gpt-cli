@@ -41,8 +41,9 @@ function download_binary {
 }
 
 function compile_binary {
+  rm -rf target
   cargo build --target x86_64-unknown-linux-gnu --release
-  mv target/x86_64-unknown-linux-gnu/release/gpt-cli /tmp/gpt-cli.gnu
+  cp target/x86_64-unknown-linux-gnu/release/gpt-cli /tmp/gpt-cli.gnu
 }
 
 if [ "$1" = "--local" ]; then
