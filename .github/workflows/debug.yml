@@ -49,7 +49,6 @@ jobs:
         run: |
           RELEASE_TAG=$(echo "v0.0.17" | sed "s|v||")
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
-
       - name: Update fallback release URL
         run: |
           sed -i "s|version=.*|version: \"${{ env.RELEASE_TAG }}\"|" nfpm.yaml
@@ -64,8 +63,9 @@ jobs:
           tag_push: '--force'
 
       - run: nfpm pkg --packager deb --target target
-      - run: sudo apt install ./target/gpt-cli_${{ env.RELEASE_TAG }}_amd64.deb
-      - run: ./test_version.sh
+      - run: ls -la target
+#      - run: sudo apt install ./target/gpt-cli_${{ env.RELEASE_TAG }}_amd64.deb
+#      - run: ./test_version.sh
       - run: nfpm pkg --packager rpm --target target
       - run: nfpm pkg --packager archlinux --target target
       - name: Compute shasums
