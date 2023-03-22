@@ -52,15 +52,15 @@ jobs:
       - name: Update fallback release URL
         run: |
           sed -i "s|version: .*|version: \"${{ env.RELEASE_TAG }}\"|" nfpm.yaml
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: Daniel Gustaw
-          author_email: gustaw.daniel@gmail.com
-          message: "updated nfpm.yaml version to ${{ env.RELEASE_TAG }}"
-          add: 'nfpm.yaml'
-          push: origin HEAD:main
-          tag_push: '--force'
+#      - name: Commit changes
+#        uses: EndBug/add-and-commit@v9
+#        with:
+#          author_name: Daniel Gustaw
+#          author_email: gustaw.daniel@gmail.com
+#          message: "updated nfpm.yaml version to ${{ env.RELEASE_TAG }}"
+#          add: 'nfpm.yaml'
+#          push: origin HEAD:main
+#          tag_push: '--force'
 
       - run: cat nfpm.yaml
       - run: nfpm pkg --packager deb --target target
