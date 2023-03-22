@@ -52,7 +52,7 @@ jobs:
 
       - name: Update fallback release URL
         run: |
-          sed -i "s|version=.*|version: \"${{ env.PKGVER }\"|" nfpm.yaml
+          sed -i "s|version=.*|version: \"${{ env.PKGVER }}\"|" nfpm.yaml
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
