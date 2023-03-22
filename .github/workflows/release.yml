@@ -160,34 +160,47 @@ jobs:
       - run: cargo build --release
       - name: Get release information
         run: |
-          RELEASE_TAG=$(echo ${{ github.event.release.tag_name }} | sed "s|v||")
+          RELEASE_TAG=$(echo "v0.0.17" | sed "s|v||")
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
-
       - name: Update fallback release URL
         run: |
-          sed -i "s|version=.*|version: \"${{ env.PKGVER }\"|" nfpm.yaml
+          sed -i "s|version: .*|version: \"${{ env.RELEASE_TAG }}\"|" nfpm.yaml
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
           author_name: Daniel Gustaw
           author_email: gustaw.daniel@gmail.com
-          message: "updated nfpm.yaml version to ${{ env.PKGVER }}"
+          message: "updated nfpm.yaml version to ${{ env.RELEASE_TAG }}"
           add: 'nfpm.yaml'
           push: origin HEAD:main
           tag_push: '--force'
 
+      - run: cat nfpm.yaml
       - run: nfpm pkg --packager deb --target target
-      - run: sudo apt install ./target/gpt-cli_${{ env.PKGVER }}_amd64.deb
+      - run: ls -la target
+      - run: sudo apt install ./target/gpt-cli_${{ env.RELEASE_TAG }}_amd64.deb
       - run: ./test_version.sh
       - run: nfpm pkg --packager rpm --target target
+      - run: nfpm pkg --packager archlinux --target target
+      - name: Compute shasums
+        run: |
+          mv ./target/gpt-cli_${{ env.RELEASE_TAG }}_amd64.deb gpt-cli_amd64.deb
+          mv ./target/gpt-cli-${{ env.RELEASE_TAG }}.x86_64.rpm gpt-cli.x86_64.rpm
+          mv ./target/gpt-cli-${{ env.RELEASE_TAG }}-1-x86_64.pkg.tar.zst gpt-cli-x86_64.pkg.tar.zst
+          shasum -a 256 gpt-cli_amd64.deb | cut -d " " -f 1 > gpt-cli_amd64.deb.sha256.txt
+          shasum -a 256 gpt-cli.x86_64.rpm | cut -d " " -f 1 > gpt-cli.x86_64.rpm.sha256.txt
+      - run: ls -la
       - name: Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           files: |
-            ./target/gpt-cli_${{ env.PKGVER }}_amd64.deb
-            ./target/gpt-cli-${{ env.PKGVER }}.x86_64.rpm
+            gpt-cli_amd64.deb
+            gpt-cli.x86_64.rpm
+            gpt-cli_amd64.deb.sha256.txt
+            gpt-cli.x86_64.rpm.sha256.txt
+            gpt-cli-x86_64.pkg.tar.zst
 
   snap:
     runs-on: ubuntu-latest
