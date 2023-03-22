@@ -6,19 +6,31 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+#  snap:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Install shunit
+#        run: sudo apt install -y shunit2
+#      - uses: snapcore/action-build@v1
+#        id: snapcraft
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: snap
+#          path: ${{ steps.snapcraft.outputs.snap }}
+#      - run: |
+#          sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }} --classic
+#      - run: alias p=gpt-cli
+#      - run: ./test_version.sh
+  debug:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install shunit
-        run: sudo apt install -y shunit2
-      - uses: snapcore/action-build@v1
-        id: snapcraft
-      - uses: actions/upload-artifact@v3
-        with:
-          name: snap
-          path: ${{ steps.snapcraft.outputs.snap }}
-      - run: |
-          sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }} --classic
-      - run: alias p=gpt-cli
+      - name: Install nFPM
+        run: |
+          echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
+          sudo apt update
+          sudo apt install -y nfpm shunit2
+      - run: nfpm pkg --packager deb --target target
+      - run: apt install ./target/gpt-cli_1.0.0_amd64.deb
       - run: ./test_version.sh
