@@ -2,7 +2,7 @@
 name: "gpt-cli"
 arch: "amd64"
 platform: "linux"
-version: "v0.0.17"
+version: "v0.0.19"
 section: "default"
 priority: "extra"
 maintainer: "Daniel Gustaw <gustaw.daniel@gmail.com>"

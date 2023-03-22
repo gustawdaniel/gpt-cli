@@ -1,5 +1,8 @@
+extern crate core;
+
 mod cache;
 mod decompose;
+mod get_postprocess_action;
 mod gpt3;
 mod should_exit;
 
@@ -8,100 +11,11 @@ use inquire::Confirm;
 use colored::*;
 use std::env;
 
+use crate::get_postprocess_action::{get_postprocess_action, PostprocessAction};
 use crate::gpt3::Gpt3Message;
 use crate::should_exit::{should_exit, ShouldExit};
 use std::process::{Command, Stdio};
 use tokio::runtime::Runtime;
-
-#[derive(Debug, PartialEq)]
-enum PostprocessAction {
-    // default
-    Confirm,
-    Copy,
-    Out,
-}
-
-fn get_postprocess_action(answer_text: &str) -> PostprocessAction {
-    let action_by_env = match env::var("GPT_POST") {
-        Ok(val) => match val.as_str() {
-            "confirm" => PostprocessAction::Confirm,
-            "copy" => PostprocessAction::Copy,
-            "out" => PostprocessAction::Out,
-            _ => PostprocessAction::Confirm,
-        },
-        Err(_) => PostprocessAction::Confirm,
-    };
-
-    if (answer_text.contains('$') || answer_text.starts_with("export"))
-        && action_by_env == PostprocessAction::Confirm
-    {
-        return PostprocessAction::Copy;
-    }
-
-    action_by_env
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::env;
-
-    #[test]
-    fn test_get_postprocess_action_confirm() {
-        env::remove_var("GPT_POST");
-        let answer = "This is a normal answer.".to_string();
-        let action = get_postprocess_action(&answer);
-        assert_eq!(action, PostprocessAction::Confirm);
-    }
-
-    #[test]
-    fn test_get_postprocess_action_copy() {
-        env::remove_var("GPT_POST");
-        let answer = "This is an answer containing $variable.".to_string();
-        let action = get_postprocess_action(&answer);
-        assert_eq!(action, PostprocessAction::Copy);
-    }
-
-    #[test]
-    fn test_get_postprocess_action_export() {
-        env::remove_var("GPT_POST");
-        let answer = "export MY_VARIABLE=value".to_string();
-        let action = get_postprocess_action(&answer);
-        assert_eq!(action, PostprocessAction::Copy);
-    }
-
-    #[test]
-    fn test_get_postprocess_action_env_confirm() {
-        env::set_var("GPT_POST", "confirm");
-        let answer = "This is a normal answer.".to_string();
-        let action = get_postprocess_action(&answer);
-        assert_eq!(action, PostprocessAction::Confirm);
-    }
-
-    #[test]
-    fn test_get_postprocess_action_env_copy() {
-        env::set_var("GPT_POST", "copy");
-        let answer = "This is a normal answer.".to_string();
-        let action = get_postprocess_action(&answer);
-        assert_eq!(action, PostprocessAction::Copy);
-    }
-
-    #[test]
-    fn test_get_postprocess_action_env_out() {
-        let answer = "This is a normal answer.".to_string();
-        env::set_var("GPT_POST", "out");
-        let action = get_postprocess_action(&answer);
-        assert_eq!(action, PostprocessAction::Out);
-    }
-
-    #[test]
-    fn test_get_postprocess_action_env_invalid() {
-        env::set_var("GPT_POST", "invalid");
-        let answer = "This is a normal answer.".to_string();
-        let action = get_postprocess_action(&answer);
-        assert_eq!(action, PostprocessAction::Confirm);
-    }
-}
 
 fn postprocess(answer_text: &String) {
     let action = get_postprocess_action(answer_text);
@@ -149,13 +63,12 @@ fn postprocess(answer_text: &String) {
     }
 }
 
-async fn async_main() {
-    let args: Vec<String> = env::args().skip(1).collect();
+fn exit_with_messages_if_required(should_exit: ShouldExit) {
     let ShouldExit {
         exit,
         messages,
         is_error,
-    } = should_exit(&args);
+    } = should_exit;
 
     if exit {
         for message in messages.iter() {
@@ -167,6 +80,11 @@ async fn async_main() {
         }
         std::process::exit(1);
     }
+}
+
+async fn async_main() {
+    let args: Vec<String> = env::args().skip(1).collect();
+    exit_with_messages_if_required(should_exit(&args));
 
     let content = args.join(" ");
     let rt = Runtime::new().unwrap();
@@ -186,22 +104,28 @@ async fn async_main() {
             ])
             .await;
 
-        if let Err(error) = response {
-            eprintln!("{}", error.red());
-            if error == *"Error: GPT3_API_KEY environment variable is not defined." {
-                eprintln!(
-                    "Please set the GPT3_API_KEY environment variable to your OpenAI API key."
-                );
+        match response {
+            Err(error) => {
+                let mut messages = vec![error.red()];
+                if error == *"Error: GPT3_API_KEY environment variable is not defined." {
+                    messages.push(
+                        "Please set the GPT3_API_KEY environment variable to your OpenAI API key."
+                            .white(),
+                    );
+                }
+                exit_with_messages_if_required(ShouldExit {
+                    is_error: true,
+                    exit: true,
+                    messages,
+                });
             }
-            std::process::exit(1);
+            Ok(data) => {
+                let choice = data.choices.first().expect("No choice in response");
+                let answer_text = &choice.message.content;
+
+                postprocess(answer_text);
+            }
         }
-
-        let data = response.expect("Unhandled error");
-
-        let choice = data.choices.first().expect("No choice in response");
-        let answer_text = &choice.message.content;
-
-        postprocess(answer_text);
     });
 }
 

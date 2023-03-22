@@ -296,4 +296,44 @@ mod tests {
         );
         mock.assert();
     }
+
+    #[tokio::test]
+    async fn test_ask_fail() {
+        let server = httpmock::MockServer::start();
+
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::POST)
+                .path("/v1/chat/completions");
+            then.status(500).json_body_obj(&json!({
+                "status": "error",
+                "message": "unexpected error"
+            }));
+        });
+
+        std::env::set_var("GPT3_API_KEY", "test_key");
+        let gpt = Gpt::new(Some(false), Some(&server.url("")));
+        let messages = vec![
+            Gpt3Message {
+                role: "system".to_string(),
+                content: Gpt::get_system_prompt(),
+            },
+            Gpt3Message {
+                role: "user".to_string(),
+                content: "Update all npm packages to the latest version.".to_string(),
+            },
+        ];
+
+        // Call
+        match gpt.ask(messages).await {
+            Ok(_) => assert!(false, "Error was expected from mock."),
+            Err(error_message) => {
+                // Assert
+                assert_eq!(
+                    error_message,
+                    "Request failed with status code: 500 Internal Server Error\nError response body: {\"message\":\"unexpected error\",\"status\":\"error\"}"
+                );
+                mock.assert();
+            }
+        }
+    }
 }

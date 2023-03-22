@@ -149,8 +149,8 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   deb-rpm:
-    permissions:
-      contents: write
+#    permissions:
+#      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -167,15 +167,15 @@ jobs:
       - name: Update fallback release URL
         run: |
           sed -i "s|version: .*|version: \"${{ env.RELEASE_TAG }}\"|" nfpm.yaml
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: Daniel Gustaw
-          author_email: gustaw.daniel@gmail.com
-          message: "updated nfpm.yaml version to ${{ env.RELEASE_TAG }}"
-          add: 'nfpm.yaml'
-          push: origin HEAD:main
-          tag_push: '--force'
+#      - name: Commit changes
+#        uses: EndBug/add-and-commit@v9
+#        with:
+#          author_name: Daniel Gustaw
+#          author_email: gustaw.daniel@gmail.com
+#          message: "updated nfpm.yaml version to ${{ env.RELEASE_TAG }}"
+#          add: 'nfpm.yaml'
+#          push: origin HEAD:main
+#          tag_push: '--force'
 
       - run: cat nfpm.yaml
       - run: nfpm pkg --packager deb --target target
