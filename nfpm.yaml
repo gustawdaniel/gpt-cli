@@ -1,35 +1,16 @@
-# nfpm example configuration file
-#
 # check https://nfpm.goreleaser.com/configuration for detailed usage
-#
 name: "gpt-cli"
 arch: "amd64"
 platform: "linux"
 version: "v0.0.16"
 section: "default"
 priority: "extra"
-#replaces:
-#- foobar
-#provides:
-#- bar
-#depends:
-#- libxcb
-#- bar
-#recommends:
-#- whatever
-#suggests:
-#- something-else
-#conflicts:
-#- not-foo
-#- not-bar
-maintainer: "John Doe <john@example.com>"
+maintainer: "Daniel Gustaw <gustaw.daniel@gmail.com>"
 description: |
-  FooBar is the great foo and bar software.
-    And this can be in multiple lines!
-vendor: "FooBarCorp"
-homepage: "http://example.com"
+  Run linux commands with natural language. Eg.: "show my graphic card" instead "lspci | grep VGA"
+vendor: "gustawdaniel"
+homepage: "https://github.com/gustawdaniel/gpt-cli"
 license: "MIT"
-#changelog: "changelog.yaml"
 contents:
 - src: ./target/release/gpt-cli
   dst: /usr/bin/gpt-cli
@@ -37,10 +18,6 @@ contents:
   dst: /sbin/p
   type: symlink
 overrides:
-  rpm:
-    scripts:
-#      preinstall: ./scripts/preinstall.sh
-#      postremove: ./scripts/postremove.sh
   deb:
     depends:
       - libxcb1-dev
@@ -48,12 +25,3 @@ overrides:
       - libxcb-shape0-dev
       - libxcb-xfixes0-dev
       - ca-certificates
-    scripts:
-#      postinstall: ./scripts/postinstall.sh
-#      preremove: ./scripts/preremove.sh
-#  apk:
-  # ...
-#  archlinux:
-#    depends:
-#      - baz
-#      - some-lib
