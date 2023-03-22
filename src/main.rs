@@ -110,7 +110,7 @@ async fn async_main() {
                 if error == *"Error: GPT3_API_KEY environment variable is not defined." {
                     messages.push(
                         "Please set the GPT3_API_KEY environment variable to your OpenAI API key."
-                            .white(),
+                            .normal(),
                     );
                 }
                 exit_with_messages_if_required(ShouldExit {
