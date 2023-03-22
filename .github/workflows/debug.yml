@@ -33,5 +33,5 @@ jobs:
           sudo apt install -y nfpm shunit2 xorg-dev libxcb-composite0-dev
       - run: cargo build --release
       - run: nfpm pkg --packager deb --target target
-      - run: apt install ./target/gpt-cli_0.0.16_amd64.deb
+      - run: sudo apt install ./target/gpt-cli_0.0.16_amd64.deb
       - run: ./test_version.sh
