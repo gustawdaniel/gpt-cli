@@ -51,7 +51,7 @@ jobs:
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
       - name: Update fallback release URL
         run: |
-          sed -i "s|version=.*|version: \"${{ env.RELEASE_TAG }}\"|" nfpm.yaml
+          sed -i "s|version: .*|version: \"${{ env.RELEASE_TAG }}\"|" nfpm.yaml
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
@@ -62,10 +62,11 @@ jobs:
           push: origin HEAD:main
           tag_push: '--force'
 
+      - run: cat nfpm.yaml
       - run: nfpm pkg --packager deb --target target
       - run: ls -la target
-#      - run: sudo apt install ./target/gpt-cli_${{ env.RELEASE_TAG }}_amd64.deb
-#      - run: ./test_version.sh
+      - run: sudo apt install ./target/gpt-cli_${{ env.RELEASE_TAG }}_amd64.deb
+      - run: ./test_version.sh
       - run: nfpm pkg --packager rpm --target target
       - run: nfpm pkg --packager archlinux --target target
       - name: Compute shasums
