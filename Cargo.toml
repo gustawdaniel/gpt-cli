@@ -1,6 +1,6 @@
 [package]
 name = "gpt-cli"
-version = "0.0.16"
+version = "0.0.17"
 edition = "2021"
 authors = ["Daniel Gustaw <gustaw.daniel@gmail.com>"]
 license = "MIT"
@@ -31,3 +31,9 @@ openssl = { version = "0.10", features = ["vendored"] }
 [dev-dependencies]
 grcov = "0.8.13"
 httpmock="0.6.7"
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/gpt-cli", dest = "/usr/bin/gpt-cli", mode = "755" },
+    { source = "gpt-cli.svg", dest = "/usr/share/icons/hicolor/", mode = "644" },
+]

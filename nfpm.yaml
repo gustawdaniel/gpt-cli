@@ -1,0 +1,27 @@
+# check https://nfpm.goreleaser.com/configuration for detailed usage
+name: "gpt-cli"
+arch: "amd64"
+platform: "linux"
+version: "v0.0.17"
+section: "default"
+priority: "extra"
+maintainer: "Daniel Gustaw <gustaw.daniel@gmail.com>"
+description: |
+  Run linux commands with natural language. Eg.: "show my graphic card" instead "lspci | grep VGA"
+vendor: "gustawdaniel"
+homepage: "https://github.com/gustawdaniel/gpt-cli"
+license: "MIT"
+contents:
+- src: ./target/release/gpt-cli
+  dst: /usr/bin/gpt-cli
+- src: /usr/bin/gpt-cli
+  dst: /sbin/p
+  type: symlink
+overrides:
+  deb:
+    depends:
+      - libxcb1-dev
+      - libxcb-render0-dev
+      - libxcb-shape0-dev
+      - libxcb-xfixes0-dev
+      - ca-certificates
