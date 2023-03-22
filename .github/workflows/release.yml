@@ -216,8 +216,9 @@ jobs:
         with:
           name: snap
           path: ${{ steps.snapcraft.outputs.snap }}
+      - run: cp ${{ steps.snapcraft.outputs.snap }} gpt-cli.snap
       - run: |
-          sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }} --classic
+          sudo snap install --dangerous gpt-cli.snap --classic
       - run: alias p=gpt-cli
       - run: ./test_version.sh
       - name: Release
@@ -226,4 +227,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           files: |
-            ${{ steps.snapcraft.outputs.snap }}
+            gpt-cli.snap

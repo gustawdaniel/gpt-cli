@@ -11,6 +11,8 @@ description: |
 vendor: "gustawdaniel"
 homepage: "https://github.com/gustawdaniel/gpt-cli"
 license: "MIT"
+depends:
+- libxcb
 contents:
 - src: ./target/release/gpt-cli
   dst: /usr/bin/gpt-cli
