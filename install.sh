@@ -61,7 +61,7 @@ function install_os_dependencies {
     }
     which apt && {
       echo "Installation fo Debian dependencies"
-      sudo apt install jq libdigest-sha-perl libxcb1-dev libxcb-render0-dev -y
+      sudo apt install jq libdigest-sha-perl libxcb1-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev -y
       return
     }
     which yay && {
