@@ -98,7 +98,7 @@ function install_os_dependencies {
     ;;
   zypper)
     echo "Installation ${PKG_MANAGER} dependencies"
-    sudo zypper --non-interactive install jq perl-App-cpanminus
+    sudo zypper --non-interactive install jq perl-App-cpanminus xorg-x11-util-devel libxcb-composite0 libxcb-render0 libxcb-shape0 libxcb-xfixes0
     ;;
   pacman)
     echo "Installation ${PKG_MANAGER} dependencies"
