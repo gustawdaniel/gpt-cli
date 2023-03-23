@@ -46,10 +46,47 @@ function compile_binary {
   cp target/x86_64-unknown-linux-gnu/release/gpt-cli /tmp/gpt-cli.gnu
 }
 
+function install_os_dependencies {
+  case $(uname) in
+  Linux)
+    which yum && {
+      echo "Installation fo CentOS dependencies"
+      sudo yum install jq perl-Digest-SHA libxcb -y
+      return
+    }
+    which zypper && {
+      echo "openSUSE"
+      sudo zypper install jq libxcb
+      return
+    }
+    which apt && {
+      echo "Installation fo Debian dependencies"
+      sudo apt install jq libdigest-sha-perl libxcb1-dev libxcb-render0-dev -y
+      return
+    }
+    which yay && {
+      echo "Installation fo Arch dependencies"
+      yay -S jq libxcb -y
+      return
+    }
+    ;;
+  Darwin)
+    echo "Darwin is not supported"
+    exit 1
+    ;;
+  *)
+    # Handle AmigaOS, CPM, and modified cable modems.
+    echo "AmigaOS, CPM, and modified cable modems are not supported"
+    exit 1
+    ;;
+  esac
+}
+
 if [ "$1" = "--local" ]; then
   echo "Compilation started."
   compile_binary
 else
+  install_os_dependencies
   echo "Downloading started"
   download_binary
 fi

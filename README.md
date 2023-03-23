@@ -336,3 +336,5 @@ or run it on alpine then use `musl`.
 
 I'm looking for challenging, remote job with rust + typescript + advanced math, so if you appreciate this project, you
 can share it, leave star, and recommend me earning employment commission.
+
+https://medium.com/@gustaw.daniel/enhance-your-terminal-experience-with-gpt-cli-a-linux-terminal-gpt-3-integration-1aa526a2ca89
