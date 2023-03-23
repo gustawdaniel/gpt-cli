@@ -68,19 +68,20 @@ function install_os_dependencies {
       opensuse|opensuse-leap|suse)
         PKG_MANAGER="zypper"
         echo "Installation ${PKG_MANAGER} dependencies"
-        sudo zypper --non-interactive install jq libxcb
+        sudo zypper --non-interactive install jq
+#        libxcb
         ;;
       arch|artix|manjaro)
         PKG_MANAGER="pacman"
         echo "Installation ${PKG_MANAGER} dependencies"
-        sudo pacman -Syu jq libxcb perl -y
+        sudo pacman -Syu --noconfirm jq libxcb perl
         PATH="${PATH:+${PATH}:}/usr/bin/core_perl"
         ;;
       alpine)
         PKG_MANAGER="apk"
         echo "Installation ${PKG_MANAGER} dependencies"
-        sudo apk add jq libxcb perl
-        PATH="${PATH:+${PATH}:}/usr/bin/core_perl"
+        sudo apk add jq libxcb perl-utils
+#        PATH="${PATH:+${PATH}:}/usr/bin/core_perl"
         which shasum
         ;;
       *)
