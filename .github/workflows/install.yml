@@ -45,6 +45,7 @@ jobs:
       - run: cat Cargo.toml
       - run: grep -E "^version" Cargo.toml
       - run: grep -E "^version" Cargo.toml | cut -d "\"" -f 2
+      - run: gpt-cli --version
       - run: ./test_version.sh
 
   opensuse:
@@ -52,7 +53,7 @@ jobs:
     container:
       image: opensuse/leap
     steps:
-      - run: zypper --non-interactive install wget sudo tar
+      - run: zypper --non-interactive install wget sudo tar gzip
       - uses: actions/checkout@v3
       - run: ./install.sh
       - run: |
@@ -68,7 +69,7 @@ jobs:
       image: alpine
     steps:
       - uses: actions/checkout@v3
-      - run: apk add wget sudo bash -f
+      - run: apk add wget sudo bash
       - run: ./install.sh
       - run: |
           curl -sLo /usr/local/bin/shunit2 https://raw.githubusercontent.com/kward/shunit2/master/shunit2
