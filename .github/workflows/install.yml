@@ -1,4 +1,4 @@
-name: Debug
+name: Install
 
 on:
   push:
@@ -12,6 +12,7 @@ jobs:
       image: ubuntu
     steps:
       - uses: actions/checkout@v3
+      - run: apt update -y
       - run: apt install wget sudo -y
       - run: ./install.sh
       - run: apt install shunit2 -y
@@ -34,7 +35,7 @@ jobs:
       image: archlinux
     steps:
       - uses: actions/checkout@v3
-      - run: pacman -S install wget sudo --noconfirm
+      - run: pacman -Sy wget sudo --noconfirm
       - run: ./install.sh
-      - run: pacman -S install shunit2 --noconfirm
+      - run: pacman -S shunit2 --noconfirm
       - run: ./test_version.sh
