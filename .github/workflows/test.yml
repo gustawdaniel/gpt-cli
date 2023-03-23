@@ -87,3 +87,6 @@ jobs:
 
       - name: Check version
         run: ./test_version.sh
+
+      - name: Version has 0 exit code
+        run: gpt-cli --version
