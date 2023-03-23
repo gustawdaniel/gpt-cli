@@ -51,7 +51,7 @@ jobs:
   opensuse:
     runs-on: ubuntu-latest
     container:
-      image: opensuse/leap
+      image: opensuse/tumbleweed
     steps:
       - run: zypper --non-interactive install wget sudo tar gzip
       - uses: actions/checkout@v3

@@ -62,7 +62,7 @@ function set_pkg_manager {
     centos | rhel)
       PKG_MANAGER="yum"
       ;;
-    opensuse | opensuse-leap | suse)
+    opensuse | opensuse-leap | opensuse-tumbleweed | suse)
       PKG_MANAGER="zypper"
       ;;
     arch | artix | manjaro)
