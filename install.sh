@@ -79,7 +79,7 @@ function install_os_dependencies {
       alpine)
         PKG_MANAGER="apk"
         echo "Installation ${PKG_MANAGER} dependencies"
-        sudo apk add jq libxcb perl -y
+        sudo apk add jq libxcb perl -f
         ;;
       *)
         echo "Unknown distribution, cannot determine the package manager"

@@ -38,19 +38,38 @@ jobs:
       - run: pacman -Sy wget sudo --noconfirm
       - run: ./install.sh
       - run: |
-          curl -L https://github.com/kward/shunit2/releases/download/2.1.8/shunit2 -o /usr/local/bin/shunit2
+          curl -sLo /usr/local/bin/shunit2 https://raw.githubusercontent.com/kward/shunit2/master/shunit2
           chmod +x /usr/local/bin/shunit2
+          mkdir -p /usr/share/shunit2
+          ln -s /usr/local/bin/shunit2 /usr/share/shunit2/shunit2
       - run: ./test_version.sh
 
   opensuse:
     runs-on: ubuntu-latest
     container:
-      image: opensuse
+      image: opensuse/leap
     steps:
       - uses: actions/checkout@v3
       - run: zypper install wget sudo -y
       - run: ./install.sh
       - run: |
-          curl -L https://github.com/kward/shunit2/releases/download/2.1.8/shunit2 -o /usr/local/bin/shunit2
+          curl -sLo /usr/local/bin/shunit2 https://raw.githubusercontent.com/kward/shunit2/master/shunit2
           chmod +x /usr/local/bin/shunit2
+          mkdir -p /usr/share/shunit2
+          ln -s /usr/local/bin/shunit2 /usr/share/shunit2/shunit2
+      - run: ./test_version.sh
+
+  alpine:
+    runs-on: ubuntu-latest
+    container:
+      image: alpine
+    steps:
+      - uses: actions/checkout@v3
+      - run: apk add wget sudo bash -f
+      - run: ./install.sh
+      - run: |
+          curl -sLo /usr/local/bin/shunit2 https://raw.githubusercontent.com/kward/shunit2/master/shunit2
+          chmod +x /usr/local/bin/shunit2
+          mkdir -p /usr/share/shunit2
+          ln -s /usr/local/bin/shunit2 /usr/share/shunit2/shunit2
       - run: ./test_version.sh
