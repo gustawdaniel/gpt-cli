@@ -108,7 +108,7 @@ alias p="docker run -v ~/.gpt-cache.json:/.gpt-cache.json -e GPT3_API_KEY=${GPT3
 In Docker, you can't use flag `GPT_POST` and it is automatically set as `out`. It means that you can't confirm command
 by `ENTER` and commands will not be copied to your clipboard.
 
-## Complication from source
+## Compilation from source
 
 ```
 git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli 
