@@ -98,7 +98,7 @@ function install_os_dependencies {
     ;;
   zypper)
     echo "Installation ${PKG_MANAGER} dependencies"
-    sudo zypper --non-interactive install jq perl-Digest-SHA
+    sudo zypper --non-interactive install jq perl-App-cpanminus
     ;;
   pacman)
     echo "Installation ${PKG_MANAGER} dependencies"
