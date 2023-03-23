@@ -73,12 +73,13 @@ function install_os_dependencies {
       arch|artix|manjaro)
         PKG_MANAGER="pacman"
         echo "Installation ${PKG_MANAGER} dependencies"
-        sudo pacman -S jq libxcb -y
+        sudo pacman -Syu jq libxcb perl -y
+        PATH="${PATH:+${PATH}:}/usr/bin/core_perl"
         ;;
       alpine)
         PKG_MANAGER="apk"
         echo "Installation ${PKG_MANAGER} dependencies"
-        sudo apk add jq libxcb -y
+        sudo apk add jq libxcb perl -y
         ;;
       *)
         echo "Unknown distribution, cannot determine the package manager"

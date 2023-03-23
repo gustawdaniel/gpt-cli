@@ -12,9 +12,9 @@ jobs:
       image: ubuntu
     steps:
       - uses: actions/checkout@v3
-      - run: sudo apt install wget
+      - run: apt install wget sudo -y
       - run: ./install.sh
-      - run: sudo apt install shunit2
+      - run: apt install shunit2 -y
       - run: ./test_version.sh
 
   fedora:
@@ -23,9 +23,9 @@ jobs:
       image: fedora
     steps:
       - uses: actions/checkout@v3
-      - run: sudo dnf install wget
+      - run: dnf install wget sudo -y
       - run: ./install.sh
-      - run: sudo dnf install shunit2
+      - run: dnf install shunit2 -y
       - run: ./test_version.sh
 
   archlinux:
@@ -34,7 +34,7 @@ jobs:
       image: archlinux
     steps:
       - uses: actions/checkout@v3
-      - run: sudo pacman -S install wget
+      - run: pacman -S install wget sudo --noconfirm
       - run: ./install.sh
-      - run: sudo pacman -S install shunit2
+      - run: pacman -S install shunit2 --noconfirm
       - run: ./test_version.sh
