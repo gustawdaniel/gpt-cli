@@ -65,7 +65,7 @@ function install_os_dependencies {
         echo "Installation ${PKG_MANAGER} dependencies"
         sudo yum install jq perl-Digest-SHA libxcb -y
         ;;
-      opensuse|suse)
+      opensuse|opensuse-leap|suse)
         PKG_MANAGER="zypper"
         echo "Installation ${PKG_MANAGER} dependencies"
         sudo zypper --non-interactive install jq libxcb
@@ -80,6 +80,7 @@ function install_os_dependencies {
         PKG_MANAGER="apk"
         echo "Installation ${PKG_MANAGER} dependencies"
         sudo apk add jq libxcb perl -f
+        PATH="${PATH:+${PATH}:}/usr/bin/core_perl"
         ;;
       *)
         echo "Unknown distribution, cannot determine the package manager"

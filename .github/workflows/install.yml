@@ -42,6 +42,9 @@ jobs:
           chmod +x /usr/local/bin/shunit2
           mkdir -p /usr/share/shunit2
           ln -s /usr/local/bin/shunit2 /usr/share/shunit2/shunit2
+      - run: cat Cargo.toml
+      - run: grep -E "^version" Cargo.toml
+      - run: grep -E "^version" Cargo.toml | cut -d "\"" -f 2
       - run: ./test_version.sh
 
   opensuse:
@@ -49,8 +52,8 @@ jobs:
     container:
       image: opensuse/leap
     steps:
+      - run: zypper --non-interactive install wget sudo tar
       - uses: actions/checkout@v3
-      - run: zypper --non-interactive install wget sudo
       - run: ./install.sh
       - run: |
           curl -sLo /usr/local/bin/shunit2 https://raw.githubusercontent.com/kward/shunit2/master/shunit2
