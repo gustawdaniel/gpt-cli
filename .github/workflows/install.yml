@@ -1,0 +1,40 @@
+name: Debug
+
+on:
+  push:
+    branches: ['*']
+  workflow_dispatch:
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu
+    steps:
+      - uses: actions/checkout@v3
+      - run: sudo apt install wget
+      - run: ./install.sh
+      - run: sudo apt install shunit2
+      - run: ./test_version.sh
+
+  fedora:
+    runs-on: ubuntu-latest
+    container:
+      image: fedora
+    steps:
+      - uses: actions/checkout@v3
+      - run: sudo dnf install wget
+      - run: ./install.sh
+      - run: sudo dnf install shunit2
+      - run: ./test_version.sh
+
+  archlinux:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux
+    steps:
+      - uses: actions/checkout@v3
+      - run: sudo pacman -S install wget
+      - run: ./install.sh
+      - run: sudo pacman -S install shunit2
+      - run: ./test_version.sh
