@@ -50,7 +50,7 @@ jobs:
       image: opensuse/leap
     steps:
       - uses: actions/checkout@v3
-      - run: zypper install wget sudo -y
+      - run: zypper --non-interactive install wget sudo
       - run: ./install.sh
       - run: |
           curl -sLo /usr/local/bin/shunit2 https://raw.githubusercontent.com/kward/shunit2/master/shunit2

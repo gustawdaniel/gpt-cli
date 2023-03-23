@@ -68,7 +68,7 @@ function install_os_dependencies {
       opensuse|suse)
         PKG_MANAGER="zypper"
         echo "Installation ${PKG_MANAGER} dependencies"
-        sudo zypper install jq libxcb
+        sudo zypper --non-interactive install jq libxcb
         ;;
       arch|artix|manjaro)
         PKG_MANAGER="pacman"
