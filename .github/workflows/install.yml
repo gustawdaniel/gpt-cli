@@ -42,10 +42,10 @@ jobs:
           chmod +x /usr/local/bin/shunit2
           mkdir -p /usr/share/shunit2
           ln -s /usr/local/bin/shunit2 /usr/share/shunit2/shunit2
-      - run: cat Cargo.toml
-      - run: grep -E "^version" Cargo.toml
-      - run: grep -E "^version" Cargo.toml | cut -d "\"" -f 2
-      - run: gpt-cli --version
+#      - run: cat Cargo.toml
+#      - run: grep -E "^version" Cargo.toml
+#      - run: grep -E "^version" Cargo.toml | cut -d "\"" -f 2
+#      - run: gpt-cli --version
       - run: ./test_version.sh
 
   opensuse:
@@ -72,7 +72,7 @@ jobs:
       - run: apk add wget sudo bash
       - run: ./install.sh
       - run: |
-          curl -sLo /usr/local/bin/shunit2 https://raw.githubusercontent.com/kward/shunit2/master/shunit2
+          wget -qO /usr/local/bin/shunit2 https://raw.githubusercontent.com/kward/shunit2/master/shunit2
           chmod +x /usr/local/bin/shunit2
           mkdir -p /usr/share/shunit2
           ln -s /usr/local/bin/shunit2 /usr/share/shunit2/shunit2

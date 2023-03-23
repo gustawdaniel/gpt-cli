@@ -78,7 +78,7 @@ fn exit_with_messages_if_required(should_exit: ShouldExit) {
                 println!("{}", message)
             }
         }
-        std::process::exit(1);
+        std::process::exit(if is_error { 1 } else { 0 });
     }
 }
 
