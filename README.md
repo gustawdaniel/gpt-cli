@@ -84,8 +84,9 @@ There are few options
 
 ### Shell
 
+You need: `wget` and `sudo`.
+
 ```
-sudo apt update && sudo apt install wget -y
 wget -qO- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
 ```
 

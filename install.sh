@@ -47,39 +47,48 @@ function compile_binary {
 }
 
 function install_os_dependencies {
-  case $(uname) in
-  Linux)
-    which yum && {
-      echo "Installation fo CentOS dependencies"
-      sudo yum install jq perl-Digest-SHA libxcb -y
-      return
-    }
-    which zypper && {
-      echo "openSUSE"
-      sudo zypper install jq libxcb
-      return
-    }
-    which apt && {
-      echo "Installation fo Debian dependencies"
-      sudo apt install jq libdigest-sha-perl libxcb1-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev -y
-      return
-    }
-    which yay && {
-      echo "Installation fo Arch dependencies"
-      yay -S jq libxcb -y
-      return
-    }
-    ;;
-  Darwin)
-    echo "Darwin is not supported"
+  if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    case $ID in
+      debian|ubuntu|raspbian)
+        PKG_MANAGER="apt"
+        echo "Installation ${PKG_MANAGER} dependencies"
+        sudo apt install jq libdigest-sha-perl libxcb1-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev -y
+        ;;
+      fedora)
+        PKG_MANAGER="dnf"
+        echo "Installation ${PKG_MANAGER} dependencies"
+        sudo dnf install jq perl-Digest-SHA libxcb -y
+        ;;
+      centos|rhel)
+        PKG_MANAGER="yum"
+        echo "Installation ${PKG_MANAGER} dependencies"
+        sudo yum install jq perl-Digest-SHA libxcb -y
+        ;;
+      opensuse|suse)
+        PKG_MANAGER="zypper"
+        echo "Installation ${PKG_MANAGER} dependencies"
+        sudo zypper install jq libxcb
+        ;;
+      arch|artix|manjaro)
+        PKG_MANAGER="pacman"
+        echo "Installation ${PKG_MANAGER} dependencies"
+        sudo pacman -S jq libxcb -y
+        ;;
+      alpine)
+        PKG_MANAGER="apk"
+        echo "Installation ${PKG_MANAGER} dependencies"
+        sudo apk add jq libxcb -y
+        ;;
+      *)
+        echo "Unknown distribution, cannot determine the package manager"
+        exit 1
+        ;;
+    esac
+  else
+    echo "Cannot determine the distribution, please check /etc/os-release"
     exit 1
-    ;;
-  *)
-    # Handle AmigaOS, CPM, and modified cable modems.
-    echo "AmigaOS, CPM, and modified cable modems are not supported"
-    exit 1
-    ;;
-  esac
+  fi
 }
 
 if [ "$1" = "--local" ]; then
