@@ -37,9 +37,11 @@ After `ENTER` you will see
         Kernel driver in use: nvidia
 ```
 
-## More powerful every day
+## Customization
 
-From v0.0.8 it supports context overriding. Default system context is
+### Context and output mode
+
+Default system context is
 
 > Imagine you are linux terminal command selector. I will describe task, and you will respond only using linux command,
 > without description, without explanation.
@@ -78,6 +80,36 @@ Possible values:
     - copy - will copy your answer to terminal clipboard
     - out - will print answer on standard output - usefully for further processing
 
+### Model Selection
+
+OpenAI offers many models https://platform.openai.com/docs/models/overview. Most popular are:
+
+| Name              | Description                                                                                                                   | Max Tokens | Max Words | Price input / output - per 1k tokens |
+|-------------------|-------------------------------------------------------------------------------------------------------------------------------|------------|-----------|--------------------------------------|
+| gpt-3.5-turbo     | Most capable GPT-3.5 model and optimized for chat at 1/10th the cost of text-davinci-003.                                     | 4,097      | 3,072     | $0.0015 / $0.002                     |
+| gpt-3.5-turbo-16k | Same capabilities as the standard gpt-3.5-turbo model but with 4 times the context.                                           | 16,385     | 12,228    | $0.003 / $0.004                      |
+| gpt-4             | More capable than any GPT-3.5 model, able to do more complex tasks, and optimized for chat.                                   | 8,192      | 6,144     | $0.03 /	$0.06                        |
+| gpt-4-32k         | Same capabilities as the standard gpt-4 mode but with 4x the context length. Will be updated with our latest model iteration. | 32,768     | 24,576    | $0.06 / $0.12                        |
+
+Updated pricing: https://openai.com/pricing
+
+You can select your model adding env variable `GPT_MODEL`. For example to translate long text from file `pl.txt`
+to `en.txt` use command.:
+
+```
+GPT_SYSTEM_PROMPT="I am translator from polish to english. I need to translate this text." GPT_POST=out GPT_MODEL=gpt-3.5-turbo-16k p "$(cat pl.txt)" > en.txt
+```
+
+> Access to models
+
+On July 6, 2023, Open AI gave access to the GPT-4 API (8k) to all API users who have made a successful payment of $1 or
+more. We plan to open up access to all developers soon, and then start raising rate-limits after that depending on
+compute availability.
+
+They are not currently granting access to GPT-4-32K API, but it will be made available at a later date.
+
+https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4
+
 ## Installation
 
 There are few options
@@ -102,7 +134,7 @@ ln -s ~/.cargo/bin/gpt-cli ~/.cargo/bin/p
 ### Docker
 
 ```
-alias p="docker run -v ~/.gpt-cache.json:/.gpt-cache.json -e GPT3_API_KEY=${GPT3_API_KEY} gustawdaniel/gpt-cli"
+alias p="docker run -v ~/.gpt-cache.json:/.gpt-cache.json -e OPENAPI_API_KEY=${OPENAPI_API_KEY} gustawdaniel/gpt-cli"
 ```
 
 In Docker, you can't use flag `GPT_POST` and it is automatically set as `out`. It means that you can't confirm command
@@ -118,10 +150,10 @@ sudo cp ./target/release/gpt-cli /usr/local/bin/p
 
 ## Config
 
-Copy your `GPT3_API_KEY` to env variable. Your `.profile`, `.bashrc`, or `.zshrc` file.
+Copy your `OPENAPI_API_KEY` to env variable. Your `.profile`, `.bashrc`, or `.zshrc` file.
 
 ```bash
-export GPT3_API_KEY=sk-xxx
+export OPENAPI_API_KEY=sk-xxx
 ```
 
 You'd need to enter your own OpenAI API key Here's how you can get one
@@ -233,8 +265,8 @@ Stars was updated 14-03-2023
 | Streaming       | yes                                                           |
 | Stars           | 4                                                             |
 | Release         | 13-03-2023                                                    |
-| Last update     | 14-03-2023                                                    |
-| Engine          | gpt-3.5-turbo                                                 |
+| Last update     | 03-10-2023                                                    |
+| Engine          | can be selected by GPT_MODEL (default: gpt-3.5-turbo)         |
 | Goal            | save time for cli commands typing if you do not remember them |
 
 | gpt3-cli        | https://github.com/CrazyPython/gpt3-cli                 |

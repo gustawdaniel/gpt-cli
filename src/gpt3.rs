@@ -15,10 +15,9 @@ impl Gpt {
     const OPEN_AI_HOST: &'static str = "https://api.openai.com";
 
     pub(crate) fn new(debug: Option<bool>, openapi_host: Option<&str>) -> Self {
-        let api_key = match std::env::var("GPT3_API_KEY") {
-            Ok(val) => val,
-            Err(_) => String::from(""),
-        };
+        let api_key = std::env::var("OPENAI_API_KEY")
+            .or_else(|_| std::env::var("GPT3_API_KEY"))
+            .unwrap_or_else(|_| String::new());
 
         let openapi_host = String::from(openapi_host.unwrap_or(Gpt::OPEN_AI_HOST));
 
@@ -45,7 +44,7 @@ impl Gpt {
             Ok(())
         } else {
             Err(String::from(
-                "Error: GPT3_API_KEY environment variable is not defined.",
+                "Error: OPENAPI_API_KEY environment variable is not defined.",
             ))
         }
     }
@@ -89,8 +88,10 @@ impl Gpt {
             }
         }
 
+        let model = std::env::var("GPT_MODEL").unwrap_or_else(|_| String::from("gpt-3.5-turbo"));
+
         let data = json!({
-            "model": "gpt-3.5-turbo",
+            "model": model,
             "messages": messages
         });
 
@@ -203,7 +204,7 @@ mod tests {
 
     #[test]
     fn test_ask_with_env_var_and_debug_true() {
-        std::env::set_var("GPT3_API_KEY", "test_key");
+        std::env::set_var("OPENAPI_API_KEY", "test_key");
         let gpt = Gpt::new(Some(true), None);
         let messages = vec![Gpt3Message {
             content: "hello".to_string(),
@@ -220,7 +221,7 @@ mod tests {
 
     #[test]
     fn test_ask_without_env_var() {
-        std::env::remove_var("GPT3_API_KEY");
+        std::env::remove_var("OPENAPI_API_KEY");
         let gpt = Gpt::new(Some(false), None);
         let messages = vec![Gpt3Message {
             content: "hello".to_string(),
@@ -230,7 +231,7 @@ mod tests {
         assert!(result.is_err());
         // Check that the error message is correct
         let error = result.unwrap_err();
-        assert!(error.contains("Error: GPT3_API_KEY environment variable is not defined."));
+        assert!(error.contains("Error: OPENAPI_API_KEY environment variable is not defined."));
     }
 
     #[tokio::test]
@@ -273,7 +274,7 @@ mod tests {
             }));
         });
 
-        std::env::set_var("GPT3_API_KEY", "test_key");
+        std::env::set_var("OPENAPI_API_KEY", "test_key");
         let gpt = Gpt::new(Some(false), Some(&server.url("")));
         let messages = vec![
             Gpt3Message {
@@ -310,7 +311,7 @@ mod tests {
             }));
         });
 
-        std::env::set_var("GPT3_API_KEY", "test_key");
+        std::env::set_var("OPENAPI_API_KEY", "test_key");
         let gpt = Gpt::new(Some(false), Some(&server.url("")));
         let messages = vec![
             Gpt3Message {

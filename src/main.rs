@@ -107,9 +107,9 @@ async fn async_main() {
         match response {
             Err(error) => {
                 let mut messages = vec![error.red()];
-                if error == *"Error: GPT3_API_KEY environment variable is not defined." {
+                if error == *"Error: OPENAPI_API_KEY environment variable is not defined." {
                     messages.push(
-                        "Please set the GPT3_API_KEY environment variable to your OpenAI API key."
+                        "Please set the OPENAPI_API_KEY environment variable to your OpenAI API key."
                             .normal(),
                     );
                 }
