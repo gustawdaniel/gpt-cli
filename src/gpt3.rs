@@ -44,7 +44,7 @@ impl Gpt {
             Ok(())
         } else {
             Err(String::from(
-                "Error: OPENAPI_API_KEY environment variable is not defined.",
+                "Error: OPENAI_API_KEY environment variable is not defined.",
             ))
         }
     }
