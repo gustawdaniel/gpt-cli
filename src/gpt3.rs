@@ -16,10 +16,11 @@ impl Gpt {
 
     pub(crate) fn new(debug: Option<bool>, openapi_host: Option<&str>) -> Self {
         let api_key = std::env::var("OPENAI_API_KEY")
-            .or_else(|_| std::env::var("GPT3_API_KEY"))
             .unwrap_or_else(|_| String::new());
 
-        let openapi_host = String::from(openapi_host.unwrap_or(Gpt::OPEN_AI_HOST));
+        let openapi_host = std::env::var("OPENAI_BASE_URL")
+            .ok()
+            .unwrap_or_else(|| String::from(openapi_host.unwrap_or(Gpt::OPEN_AI_HOST)));
 
         Self {
             api_key,
@@ -35,7 +36,7 @@ impl Gpt {
     pub(crate) fn get_system_prompt() -> String {
         match std::env::var("GPT_SYSTEM_PROMPT") {
             Ok(val) => val,
-            Err(_) => String::from("Imagine you are linux terminal commands selector. I will describe task and you will respond only using linux command, without description, without explanation.")
+            Err(_) => String::from("Imagine you are linux bash terminal commands selector. I will describe task and you will respond only using linux command, without description, without explanation or any extrenous syntax.")
         }
     }
 
@@ -58,7 +59,7 @@ impl Gpt {
                 id: "chatcmpl-6taJ9NwJAFdKNafz0Y49j5ga0jFiF".to_string(),
                 object: "chat.completion".to_string(),
                 created: 1678705627,
-                model: "gpt-3.5-turbo-0301".to_string(),
+                model: "gpt-4o".to_string(),
                 usage: Usage {
                     prompt_tokens: 45,
                     completion_tokens: 3,
@@ -88,7 +89,7 @@ impl Gpt {
             }
         }
 
-        let model = std::env::var("GPT_MODEL").unwrap_or_else(|_| String::from("gpt-3.5-turbo"));
+        let model = std::env::var("GPT_MODEL").unwrap_or_else(|_| String::from("gpt-4o"));
 
         let data = json!({
             "model": model,
@@ -204,7 +205,7 @@ mod tests {
 
     #[test]
     fn test_ask_with_env_var_and_debug_true() {
-        std::env::set_var("OPENAPI_API_KEY", "test_key");
+        std::env::set_var("OPENAI_API_KEY", "test_key");
         let gpt = Gpt::new(Some(true), None);
         let messages = vec![Gpt3Message {
             content: "hello".to_string(),
@@ -214,14 +215,14 @@ mod tests {
         assert!(result.is_ok());
         // Check that the response is correct
         let response = result.unwrap();
-        assert_eq!(response.model, "gpt-3.5-turbo-0301");
+        assert_eq!(response.model, "gpt-4o");
         assert_eq!(response.choices.len(), 1);
         assert_eq!(response.choices[0].finish_reason, Some("stop".to_string()));
     }
 
     #[test]
     fn test_ask_without_env_var() {
-        std::env::remove_var("OPENAPI_API_KEY");
+        std::env::remove_var("OPENAI_API_KEY");
         let gpt = Gpt::new(Some(false), None);
         let messages = vec![Gpt3Message {
             content: "hello".to_string(),
@@ -231,7 +232,7 @@ mod tests {
         assert!(result.is_err());
         // Check that the error message is correct
         let error = result.unwrap_err();
-        assert!(error.contains("Error: OPENAPI_API_KEY environment variable is not defined."));
+        assert!(error.contains("Error: OPENAI_API_KEY environment variable is not defined."));
     }
 
     #[tokio::test]
@@ -262,7 +263,7 @@ mod tests {
                 "id": "testid",
                 "object": "chat.completion",
                 "created": 1678705627,
-                "model": "gpt-3.5-turbo-0301",
+                "model": "gpt-4o",
                 "usage": { "prompt_tokens": 45, "completion_tokens": 3, "total_tokens": 48 },
                 "choices": [
                     {
@@ -274,7 +275,7 @@ mod tests {
             }));
         });
 
-        std::env::set_var("OPENAPI_API_KEY", "test_key");
+        std::env::set_var("OPENAI_API_KEY", "test_key");
         let gpt = Gpt::new(Some(false), Some(&server.url("")));
         let messages = vec![
             Gpt3Message {
@@ -311,7 +312,7 @@ mod tests {
             }));
         });
 
-        std::env::set_var("OPENAPI_API_KEY", "test_key");
+        std::env::set_var("OPENAI_API_KEY", "test_key");
         let gpt = Gpt::new(Some(false), Some(&server.url("")));
         let messages = vec![
             Gpt3Message {
