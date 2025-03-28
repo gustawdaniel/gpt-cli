@@ -1,60 +1,46 @@
-[![Test](https://github.com/gustawdaniel/gpt-cli/actions/workflows/test.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/test.yml)
-[![Release](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml/badge.svg)](https://github.com/gustawdaniel/gpt-cli/actions/workflows/release.yml)
-[![codecov](https://codecov.io/gh/gustawdaniel/gpt-cli/branch/main/graph/badge.svg?token=KB4F1JF9W6)](https://codecov.io/gh/gustawdaniel/gpt-cli)
-![Crates.io](https://img.shields.io/crates/d/gpt-cli?label=Crates.io%20downloads)
-![Docker Pulls](https://img.shields.io/docker/pulls/gustawdaniel/gpt-cli)
-![Crates.io](https://img.shields.io/crates/v/gpt-cli)
-![GitHub](https://img.shields.io/github/license/gustawdaniel/gpt-cli)
+![GitHub](https://img.shields.io/github/license/openfinesse/gpt-cli)
 
-# Gpt Cli
+# AI CLI
 
-Linux terminal GPT3 integration with killer prompt that skip descriptions and other human-readable bullshit. It shows
-you commands that can be executed by `ENTER`.
+Intergration that allows you to use natural language in the terminal.
 
-## Example:
+## Usage:
 
-You typing:
+```bash
+user@system:~$ p show me my graphic cards
+? Execute.:
 
-```
-p show me my graphic cards
-```
+lspci | grep -i vga
 
-You will see:
-
-```
-lspci -k | grep -A 2 -E "(VGA|3D)"
+ (Y/n)  
+[Pressing enter you confirm execution of this command]
 ```
 
 After `ENTER` you will see
 
-```
-00:02.0 VGA compatible controller: Intel Corporation Alder Lake-P Integrated Graphics Controller (rev 0c)
-        Subsystem: CLEVO/KAPOK Computer Device 65f5
-        Kernel driver in use: i915
---
-01:00.0 VGA compatible controller: NVIDIA Corporation GA106M [GeForce RTX 3060 Mobile / Max-Q] (rev a1)
-        Subsystem: CLEVO/KAPOK Computer Device 67f5
-        Kernel driver in use: nvidia
+```bash
+00:02.0 VGA compatible controller: Intel Corporation CometLake-H GT2 [UHD Graphics] (rev 05)
+01:00.0 VGA compatible controller: NVIDIA Corporation TU117M [GeForce GTX 1650 Ti Mobile] (rev a1)
 ```
 
 ## Customization
 
 ### Context and output mode
 
-Default system context is
+Default system context is:
 
-> Imagine you are linux terminal command selector. I will describe task, and you will respond only using linux command,
-> without description, without explanation.
+> You are a linux terminal command generator. I will describe a task and you will respond with linux command,
+> do not include any description, explanation or any extrenous syntax.
 
-Default postprocess mode is `confirm`. It shows answer and asking if it should be executed.
+Default postprocess mode is `confirm`. It presents an answer and asks for confirmation before execution.
 
-But you can use it in other use-cases. To translate texts:
+But you can use it for other use-cases. For example, to translate texts:
 
 ```
-GPT_SYSTEM_PROMPT="I am translator from polish to english. I need to translate this text." GPT_POST=copy p Witaj świecie
+GPT_SYSTEM_PROMPT="I am a translator from polish to english. I need to translate this text." GPT_POST=copy p Witaj świecie
 ```
 
-You can redirect it to file set these environment variables as permanent.
+Set your custom system prompt and postprocess mode by setting environment variables (.profile, .bashrc, .zshrc, etc.):
 
 ```
 export GPT_SYSTEM_PROMPT="I am translator from polish to english. I need to translate this text."; export GPT_POST=out;
@@ -66,7 +52,7 @@ and then translate using:
 p "$(cat polish.txt)" > english.txt
 ```
 
-To back do default
+Revert by unsetting the environment variables:
 
 ```
 unset GPT_SYSTEM_PROMPT; unset GPT_POST
@@ -82,33 +68,17 @@ Possible values:
 
 ### Model Selection
 
-OpenAI offers many models https://platform.openai.com/docs/models/overview. Most popular are:
+You can select your model by adding env variable `GPT_MODEL` and can also use non OpenAI models by setting `OPENAI_BASE_URL`.
 
-| Name              | Description                                                                                                                   | Max Tokens | Max Words | Price input / output - per 1k tokens |
-|-------------------|-------------------------------------------------------------------------------------------------------------------------------|------------|-----------|--------------------------------------|
-| gpt-3.5-turbo     | Most capable GPT-3.5 model and optimized for chat at 1/10th the cost of text-davinci-003.                                     | 4,097      | 3,072     | $0.0015 / $0.002                     |
-| gpt-3.5-turbo-16k | Same capabilities as the standard gpt-3.5-turbo model but with 4 times the context.                                           | 16,385     | 12,228    | $0.003 / $0.004                      |
-| gpt-4             | More capable than any GPT-3.5 model, able to do more complex tasks, and optimized for chat.                                   | 8,192      | 6,144     | $0.03 /	$0.06                        |
-| gpt-4-32k         | Same capabilities as the standard gpt-4 mode but with 4x the context length. Will be updated with our latest model iteration. | 32,768     | 24,576    | $0.06 / $0.12                        |
-
-Updated pricing: https://openai.com/pricing
-
-You can select your model adding env variable `GPT_MODEL`. For example to translate long text from file `pl.txt`
-to `en.txt` use command.:
-
+```bash
+export GPT_MODEL=gpt-4o
 ```
-GPT_SYSTEM_PROMPT="I am translator from polish to english. I need to translate this text." GPT_POST=out GPT_MODEL=gpt-3.5-turbo-16k p "$(cat pl.txt)" > en.txt
+OR
+
+```bash
+export OPENAI_BASE_URL=https://openrouter.ai/api/v1
+export GPT_MODEL=anthropic/claude-3.7-sonnet
 ```
-
-> Access to models
-
-On July 6, 2023, Open AI gave access to the GPT-4 API (8k) to all API users who have made a successful payment of $1 or
-more. We plan to open up access to all developers soon, and then start raising rate-limits after that depending on
-compute availability.
-
-They are not currently granting access to GPT-4-32K API, but it will be made available at a later date.
-
-https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4
 
 ## Installation
 
@@ -122,7 +92,7 @@ You need: `wget` and `sudo`.
 wget -qO- https://raw.githubusercontent.com/gustawdaniel/gpt-cli/main/install.sh | bash
 ```
 
-it will save `gpt-cli` and alias `p` in `/usr/local/bin` so this is why it require sudo.
+it will save `gpt-cli` and alias `p` in `/usr/local/bin`
 
 ### Cargo
 
@@ -143,31 +113,27 @@ by `ENTER` and commands will not be copied to your clipboard.
 ## Compilation from source
 
 ```
-git clone https://github.com/gustawdaniel/gpt-cli && cd gpt-cli 
+git clone https://github.com/openfinesse/gpt-cli && cd gpt-cli 
 cargo build --release
 sudo cp ./target/release/gpt-cli /usr/local/bin/p
 ```
 
 ## Config
 
-Copy your `OPENAPI_API_KEY` to env variable. Your `.profile`, `.bashrc`, or `.zshrc` file.
+Make sure you have `OPENAI_API_KEY` set in your environment variables. IE: Your `.profile`, `.bashrc`, or `.zshrc` file.
 
 ```bash
-export OPENAPI_API_KEY=sk-xxx
+export OPENAI_API_KEY=sk-xxx
 ```
 
-You'd need to enter your own OpenAI API key Here's how you can get one
+You'd need to enter your own OpenAI API key. Here's how you can get one:
 
 1. Go to https://openai.com/api/login
 2. Create an account or log into your existing account
 3. Go to https://platform.openai.com/account/api-keys or
 
-![](https://user-images.githubusercontent.com/36589645/202097820-dc6905e6-4514-413b-980f-169c35ffef9a.png)
 
-Price: `$0.002 per 1,000 tokens`. Single command is about 50 tokens. So in price 1USD you have about `10.000` commands.
-Tools with model before `gpt-3.5-turbo` costs 10 times more.
-
-## Usage
+## Examples
 
 | what you typing in terminal                                                        | answers you can execute by "ENTER"                                            |
 |------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
@@ -202,6 +168,7 @@ Tools with model before `gpt-3.5-turbo` costs 10 times more.
     - [x] aur
     - [ ] apt
     - [ ] dnf
+- [x] Add support for non-OpenAI models
 
 ## Exceptions
 
@@ -218,145 +185,6 @@ p show my current shell
 Text 'echo $SHELL' was copied to your clipboard
 ```
 
-## Constrains
-
-Ofc GPT3 does not have sense of humor... so
-
-```bash
-p say mooo as cow that have colors of rainbow
-```
-
-will not work. Correct answer is
-
-```bash
-cowsay mooo | lolcat
-```
-
-and for
-
-```bash
-p show my train in terminal
-```
-
-answer is
-
-```bash
-Sorry, I do not understand. Can you please provide more details about what you want me to do?
-```
-
-instead
-
-```bash
-sl
-```
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=gustawdaniel/gpt-cli&type=Date)](https://star-history.com/#gustawdaniel/gpt-cli&Date)
-
-## Alternatives
-
-Stars was updated 14-03-2023
-
-| This project    |                                                               |
-|-----------------|---------------------------------------------------------------|
-| Language        | rust                                                          |
-| Easy to install | no (wip)                                                      |
-| Streaming       | yes                                                           |
-| Stars           | 4                                                             |
-| Release         | 13-03-2023                                                    |
-| Last update     | 03-10-2023                                                    |
-| Engine          | can be selected by GPT_MODEL (default: gpt-3.5-turbo)         |
-| Goal            | save time for cli commands typing if you do not remember them |
-
-| gpt3-cli        | https://github.com/CrazyPython/gpt3-cli                 |
-|-----------------|---------------------------------------------------------|
-| Language        | python                                                  |
-| Easy to install | medium                                                  |
-| Streaming       | yes                                                     |
-| Stars           | 50                                                      |
-| Release         | 23-03-2021                                              |
-| Last update     | 22-04-2021                                              |
-| Engine          | all before gpt-3.5-turbo                                |
-| Goal            | A lightweight command-line interface to OpenAI's GPT-3. |
-
-| ai-cli          | https://github.com/abhagsain/ai-cli                             |
-|-----------------|-----------------------------------------------------------------|
-| Language        | typescript                                                      |
-| Easy to install | yes                                                             |
-| Streaming       | no                                                              |
-| Stars           | 935                                                             |
-| Release         | 15-11-2022                                                      |
-| Last update     | 09-12-2022                                                      |
-| Engine          | all before gpt-3.5-turbo                                        |
-| Goal            | Get answers for CLI commands from GPT3 right from your terminal |
-
-| heygpt          | https://github.com/fuyufjh/heygpt               |
-|-----------------|-------------------------------------------------|
-| Language        | rust                                            |
-| Easy to install | yes                                             |
-| Streaming       | yes                                             |
-| Stars           | 40                                              |
-| Release         | 06-03-2023                                      |
-| Last update     | 12-03-2023                                      |
-| Engine          | gpt-3.5-turbo                                   |
-| Goal            | A simple common-line interface for ChatGPT API. |
-
-| caos            | https://github.com/dabumana/caos                                    |
-|-----------------|---------------------------------------------------------------------|
-| Language        | go                                                                  |
-| Easy to install | no                                                                  |
-| Streaming       | no                                                                  |
-| Stars           | 5                                                                   |
-| Release         | 22-01-2023                                                          |
-| Last update     | 13-03-2023                                                          |
-| Engine          | all before gpt-3.5-turbo                                            |
-| Goal            | advanced, configurable conversational assistant for openai services |
-
-| gptsh           | https://github.com/shorwood/gptsh                                     |
-|-----------------|-----------------------------------------------------------------------|
-| Language        | javascript                                                            |
-| Easy to install | yes                                                                   |
-| Streaming       | no                                                                    |
-| Stars           | 99                                                                    |
-| Release         | 27-12-2020                                                            |
-| Last update     | 18-01-2022                                                            |
-| Engine          | all before gpt-3.5-turbo                                              |
-| Goal            | translate natural language questions and requests into shell commands |
-
-| rusty           | https://github.com/zahidkhawaja/rusty |
-|-----------------|---------------------------------------|
-| Language        | rust                                  |
-| Easy to install | no                                    |
-| Streaming       | no                                    |
-| Stars           | 272                                   |
-| Release         | 05-09-2022                            |
-| Last update     | 07-02-2023                            |
-| Engine          | text-davinci-003                      |
-| Goal            | help you remember bash commands       |
-
-| cgpt            | https://github.com/MagicCube/cli-gpt                   |
-|-----------------|--------------------------------------------------------|
-| Language        | typescript                                             |
-| Easy to install | yes                                                    |
-| Streaming       | no                                                     |
-| Stars           | 18                                                     |
-| Release         | 07-03-2023                                             |
-| Last update     | 15-03-2023                                             |
-| Engine          | gpt-3.5-turbo                                          |
-| Goal            | Translate human language to command line using ChatGPT |
-
-| linux-command-gpt | https://github.com/asrul10/linux-command-gpt                      |
-|-------------------|-------------------------------------------------------------------|
-| Language          | go                                                                |
-| Easy to install   | no                                                                |
-| Streaming         | yes                                                               |
-| Stars             | 54                                                                |
-| Release           | 12-03-2023                                                        |
-| Last update       | 19-03-2023                                                        |
-| Engine            | gpt-3.5-turbo                                                     |
-| Goal              | Get Linux commands in natural language with the power of ChatGPT. |
-
 ## GNU vs MUSL releases
 
 During compilation, you can use static linking (musl) or dynamic (gnu). To use `terminal-clipboard` there is required
@@ -366,9 +194,6 @@ provided `musl` version.
 So to be able to use all features (support for GPT_POST=copy), I recommend to use standard `gnu` but if you need docker
 or run it on alpine then use `musl`.
 
-## Support
+## Credit
 
-I'm looking for challenging, remote job with rust + typescript + advanced math, so if you appreciate this project, you
-can share it, leave star, and recommend me earning employment commission.
-
-https://medium.com/@gustaw.daniel/enhance-your-terminal-experience-with-gpt-cli-a-linux-terminal-gpt-3-integration-1aa526a2ca89
+- [Daniel Gustaw](https://github.com/gustawdaniel) - original author

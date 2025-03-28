@@ -36,7 +36,7 @@ impl Gpt {
     pub(crate) fn get_system_prompt() -> String {
         match std::env::var("GPT_SYSTEM_PROMPT") {
             Ok(val) => val,
-            Err(_) => String::from("Imagine you are linux bash terminal commands selector. I will describe task and you will respond only using linux command, without description, without explanation or any extrenous syntax.")
+            Err(_) => String::from("You are a linux terminal command generator. I will describe a task and you will respond with linux command, do not include any description, explanation or any extrenous syntax.")
         }
     }
 
@@ -199,7 +199,7 @@ mod tests {
         let prompt = Gpt::get_system_prompt();
         assert_eq!(
             prompt,
-            "Imagine you are linux terminal commands selector. I will describe task and you will respond only using linux command, without description, without explanation."
+            "You are a linux terminal command generator. I will describe a task and you will respond with linux command, do not include any description, explanation or any extrenous syntax."
         );
     }
 
