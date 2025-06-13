@@ -107,7 +107,7 @@ jobs:
 
       - name: Download binary and calculate checksum
         run: |
-          wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${PKGVER}/gpt-cli.gnu" -O gpt-cli.gnu
+          wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli.gnu" -O gpt-cli.gnu
           echo "CHECKSUM=$(sha512sum gpt-cli.gnu | cut -d ' ' -f 1)" >> $GITHUB_ENV
 
       - name: Prepare PKGBUILD
@@ -225,11 +225,11 @@ jobs:
         run: cargo build --release
       - name: Get release information
         run: |
-          RELEASE_TAG=$(echo "${TAG}" | sed "s/^v//")
+          RELEASE_TAG=$(echo "${{ env.TAG }}" | sed "s/^v//")
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
       - name: Prepare nfpm.yaml from template
         run: |
-          envsubst < nfpm.yaml.template > nfpm.yaml
+          sed -i "s|version: .*|version: \"${{ env.RELEASE_TAG }}\"|" nfpm.yaml
           cat nfpm.yaml
       - name: Build DEB
         run: nfpm pkg --packager deb --target target
