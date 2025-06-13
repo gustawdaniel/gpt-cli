@@ -2,7 +2,7 @@ name: Release
 
 on:
   release:
-    types: [ created ]
+    types: [created]
   workflow_dispatch:
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - name: Install clipboard deps
         run: sudo apt install xorg-dev libxcb-composite0-dev
       - run: cargo build --target x86_64-unknown-linux-gnu --release
@@ -62,7 +62,6 @@ jobs:
         run: |
           wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli.gnu" -O gpt-cli.gnu
           echo "CHECKSUM=$(sha512sum gpt-cli.gnu | cut -d " " -f 1)" >> $GITHUB_ENV
-
       - name: Prepare PKGBUILD
         run: |
           cat <<EOT >> PKGBUILD
@@ -79,14 +78,10 @@ jobs:
           sha512sums_x86_64=('${{ env.CHECKSUM }}')
           
           package() {
-          # Install the binary
           install -Dm755 "\$srcdir/gpt-cli.gnu" "\$pkgdir/usr/bin/gpt-cli"
-          
-          # Create a symbolic link
           ln -s "/usr/bin/gpt-cli" "\$pkgdir/usr/bin/p"
           }
           EOT
-
       - name: Generate .SRCINFO
         run: |
           useradd -m builduser
@@ -94,13 +89,11 @@ jobs:
           echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
           chown -R builduser:builduser .
           sudo -u builduser bash -c "makepkg --printsrcinfo > .SRCINFO"
-
       - name: Show files
         run: |
           ls -la
           cat PKGBUILD
           cat .SRCINFO
-
       - name: Publish AUR package
         uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
         with:
@@ -115,7 +108,7 @@ jobs:
   musl-docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - run: sudo apt install musl-tools
       - run: rustup target add x86_64-unknown-linux-musl
       - run: cargo build --target x86_64-unknown-linux-musl --release
@@ -126,7 +119,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/gpt-cli
-
       - run: cp target/x86_64-unknown-linux-musl/release/gpt-cli gpt-cli.musl
       - run: shasum -a 256 gpt-cli.musl | cut -d " " -f 1 > gpt-cli.musl.sha256.txt
       - name: Release
@@ -141,7 +133,7 @@ jobs:
   cargo:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - name: Install clipboard deps
         run: sudo apt install xorg-dev libxcb-composite0-dev
       - run: cargo build --target x86_64-unknown-linux-gnu --release
@@ -150,11 +142,9 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   deb-rpm:
-#    permissions:
-#      contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install nFPM
         run: |
           echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
@@ -168,16 +158,6 @@ jobs:
       - name: Update fallback release URL
         run: |
           sed -i "s|version: .*|version: \"${{ env.RELEASE_TAG }}\"|" nfpm.yaml
-#      - name: Commit changes
-#        uses: EndBug/add-and-commit@v9
-#        with:
-#          author_name: Daniel Gustaw
-#          author_email: gustaw.daniel@gmail.com
-#          message: "updated nfpm.yaml version to ${{ env.RELEASE_TAG }}"
-#          add: 'nfpm.yaml'
-#          push: origin HEAD:main
-#          tag_push: '--force'
-
       - run: cat nfpm.yaml
       - run: nfpm pkg --packager deb --target target
       - run: ls -la target
@@ -208,7 +188,7 @@ jobs:
   snap:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install shunit
         run: sudo apt install -y shunit2
       - uses: snapcore/action-build@v1
@@ -218,8 +198,7 @@ jobs:
           name: snap
           path: ${{ steps.snapcraft.outputs.snap }}
       - run: cp ${{ steps.snapcraft.outputs.snap }} gpt-cli.snap
-      - run: |
-          sudo snap install --dangerous gpt-cli.snap --classic
+      - run: sudo snap install --dangerous gpt-cli.snap --classic
       - run: alias p=gpt-cli
       - run: ./test_version.sh
       - name: Release
@@ -233,7 +212,7 @@ jobs:
   macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: cargo build --release
       - run: cp target/release/gpt-cli gpt-cli.macos
       - run: shasum -a 256 gpt-cli.macos | cut -d " " -f 1 > gpt-cli.macos.sha256.txt
