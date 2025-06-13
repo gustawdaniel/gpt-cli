@@ -49,12 +49,12 @@ mod tests {
             result.messages[0].clone().clear().to_string().as_str(),
             "Please add description, which command you want to execute."
         );
-        assert_eq!(result.messages[0].fgcolor(), Some(Color::Red));
+        assert_eq!(result.messages[0].fgcolor, Some(Color::Red));
         assert_eq!(
             result.messages[1].clone().clear().to_string().as_str(),
             "eg.: p show calendar"
         );
-        assert_eq!(result.messages[1].fgcolor(), Some(Color::White));
+        assert_eq!(result.messages[1].fgcolor, Some(Color::White));
     }
 
     #[test]

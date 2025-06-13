@@ -188,14 +188,18 @@ mod tests {
 
     #[test]
     fn test_get_system_prompt_with_env_var() {
-        std::env::set_var("GPT_SYSTEM_PROMPT", "Custom prompt");
+        unsafe {
+            std::env::set_var("GPT_SYSTEM_PROMPT", "Custom prompt");
+        }
         let prompt = Gpt::get_system_prompt();
         assert_eq!(prompt, "Custom prompt");
     }
 
     #[test]
     fn test_get_system_prompt_without_env_var() {
-        std::env::remove_var("GPT_SYSTEM_PROMPT");
+        unsafe {
+            std::env::remove_var("GPT_SYSTEM_PROMPT");
+        }
         let prompt = Gpt::get_system_prompt();
         assert_eq!(
             prompt,
@@ -205,7 +209,9 @@ mod tests {
 
     #[test]
     fn test_ask_with_env_var_and_debug_true() {
-        std::env::set_var("OPENAI_API_KEY", "test_key");
+        unsafe {
+            std::env::set_var("OPENAI_API_KEY", "test_key");
+        }
         let gpt = Gpt::new(Some(true), None);
         let messages = vec![Gpt3Message {
             content: "hello".to_string(),
@@ -222,7 +228,9 @@ mod tests {
 
     #[test]
     fn test_ask_without_env_var() {
-        std::env::remove_var("OPENAI_API_KEY");
+        unsafe {
+            std::env::remove_var("OPENAI_API_KEY");
+        }
         let gpt = Gpt::new(Some(false), None);
         let messages = vec![Gpt3Message {
             content: "hello".to_string(),
@@ -275,7 +283,9 @@ mod tests {
             }));
         });
 
-        std::env::set_var("OPENAI_API_KEY", "test_key");
+        unsafe {
+            std::env::set_var("OPENAI_API_KEY", "test_key");
+        }
         let gpt = Gpt::new(Some(false), Some(&server.url("")));
         let messages = vec![
             Gpt3Message {
@@ -312,7 +322,9 @@ mod tests {
             }));
         });
 
-        std::env::set_var("OPENAI_API_KEY", "test_key");
+        unsafe {
+            std::env::set_var("OPENAI_API_KEY", "test_key");
+        }
         let gpt = Gpt::new(Some(false), Some(&server.url("")));
         let messages = vec![
             Gpt3Message {

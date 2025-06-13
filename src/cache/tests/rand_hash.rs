@@ -1,9 +1,8 @@
 use hex::encode;
-use rand::{rngs::OsRng, Rng};
+use rand::random;
 
 pub fn get_random_hash() -> String {
-    let mut rng = OsRng;
-    let bytes: [u8; 12] = rng.gen();
+    let bytes: [u8; 12] = random();
     encode(bytes)
 }
 

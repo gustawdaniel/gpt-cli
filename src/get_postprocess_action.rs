@@ -35,7 +35,9 @@ mod tests {
 
     #[test]
     fn test_get_postprocess_action_confirm() {
-        env::remove_var("GPT_POST");
+        unsafe {
+            env::remove_var("GPT_POST");
+        }
         let answer = "This is a normal answer.".to_string();
         let action = get_postprocess_action(&answer);
         assert_eq!(action, PostprocessAction::Confirm);
@@ -43,7 +45,9 @@ mod tests {
 
     #[test]
     fn test_get_postprocess_action_copy() {
-        env::remove_var("GPT_POST");
+        unsafe {
+            env::remove_var("GPT_POST");
+        }
         let answer = "This is an answer containing $variable.".to_string();
         let action = get_postprocess_action(&answer);
         assert_eq!(action, PostprocessAction::Copy);
@@ -51,7 +55,9 @@ mod tests {
 
     #[test]
     fn test_get_postprocess_action_export() {
-        env::remove_var("GPT_POST");
+        unsafe {
+            env::remove_var("GPT_POST");
+        }
         let answer = "export MY_VARIABLE=value".to_string();
         let action = get_postprocess_action(&answer);
         assert_eq!(action, PostprocessAction::Copy);
@@ -59,7 +65,9 @@ mod tests {
 
     #[test]
     fn test_get_postprocess_action_env_confirm() {
-        env::set_var("GPT_POST", "confirm");
+        unsafe {
+            env::set_var("GPT_POST", "confirm");
+        }
         let answer = "This is a normal answer.".to_string();
         let action = get_postprocess_action(&answer);
         assert_eq!(action, PostprocessAction::Confirm);
@@ -67,7 +75,9 @@ mod tests {
 
     #[test]
     fn test_get_postprocess_action_env_copy() {
-        env::set_var("GPT_POST", "copy");
+        unsafe {
+            env::set_var("GPT_POST", "copy");
+        }
         let answer = "This is a normal answer.".to_string();
         let action = get_postprocess_action(&answer);
         assert_eq!(action, PostprocessAction::Copy);
@@ -76,14 +86,18 @@ mod tests {
     #[test]
     fn test_get_postprocess_action_env_out() {
         let answer = "This is a normal answer.".to_string();
-        env::set_var("GPT_POST", "out");
+        unsafe {
+            env::set_var("GPT_POST", "out");
+        }
         let action = get_postprocess_action(&answer);
         assert_eq!(action, PostprocessAction::Out);
     }
 
     #[test]
     fn test_get_postprocess_action_env_invalid() {
-        env::set_var("GPT_POST", "invalid");
+        unsafe {
+            env::set_var("GPT_POST", "invalid");
+        }
         let answer = "This is a normal answer.".to_string();
         let action = get_postprocess_action(&answer);
         assert_eq!(action, PostprocessAction::Confirm);
