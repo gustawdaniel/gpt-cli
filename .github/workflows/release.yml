@@ -215,7 +215,7 @@ jobs:
       - run: cargo build --release
       - name: Get release information
         run: |
-          RELEASE_TAG=$(echo "v0.0.17" | sed "s|v||")
+          RELEASE_TAG=$(echo "${{ env.TAG }}" | sed "s/^v//")
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
       - name: Update fallback release URL
         run: |
