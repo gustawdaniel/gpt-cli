@@ -83,7 +83,7 @@ jobs:
           tag_push: '--force'
 
   aur:
-    needs: gnu-bash
+    needs: [resolve-tag, gnu-bash]
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
