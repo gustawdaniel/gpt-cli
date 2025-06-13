@@ -40,6 +40,12 @@ jobs:
     needs: resolve-tag
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          echo ${{ env.TAG }}
+      - run: |
+          echo "TAG is: $TAG"
+      - name: Debug output from resolve-tag
+        run: echo "Resolved tag is ${{ needs.resolve-tag.outputs.tag }}"
       - uses: actions/checkout@v4
       - name: Install clipboard deps
         run: sudo apt install xorg-dev libxcb-composite0-dev
@@ -136,6 +142,7 @@ jobs:
           ssh_keyscan_types: ed25519
 
   musl-docker:
+    needs: resolve-tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -173,6 +180,7 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   deb-rpm:
+    needs: resolve-tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -218,6 +226,7 @@ jobs:
             gpt-cli-x86_64.pkg.tar.zst
 
   snap:
+    needs: resolve-tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -243,6 +252,7 @@ jobs:
             gpt-cli.snap
 
   macos:
+    needs: resolve-tag
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
