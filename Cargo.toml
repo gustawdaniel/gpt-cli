@@ -1,6 +1,6 @@
 [package]
 name = "gpt-cli"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Daniel Gustaw <gustaw.daniel@gmail.com>"]
 license = "MIT"
@@ -8,7 +8,7 @@ description = "Run linux commands with natural language. Eg.: 'show my graphic c
 readme = "README.md"
 homepage = "https://github.com/gustawdaniel/gpt-cli"
 repository = "https://github.com/gustawdaniel/gpt-cli"
-keywords = ["cli", "openai", "gpt3", "gpt3-cli", "gpt3-turbo"]
+keywords = ["cli", "openai", "gpt-cli"]
 categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -20,7 +20,7 @@ rand = "0.9.1"
 hex = "0.4.3"
 colored = "3.0.0"
 serde = { version = "1.0.219", features = ["derive"] }
-reqwest = { version = "0.12.20", features = ["json"] }
+reqwest = { version = "0.12.19", features = ["json"] }
 futures = "0.3.31"
 tokio = { version = "1.45.1", features = ["full"] }
 inquire = { version = "0.7.5" }
