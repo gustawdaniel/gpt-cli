@@ -70,8 +70,13 @@ function install_os_dependencies {
 }
 
 function download_binary {
-  BIN_TYPE="$([ "$PKG_MANAGER" = "apk" ] && echo "musl" || echo "gnu")"
-  [ "$OS_TYPE" = "macos" ] && BIN_TYPE="macos"
+  if [ "$OS_TYPE" = "macos" ]; then
+    BIN_TYPE="macos"
+  elif [ "$PKG_MANAGER" = "apk" ]; then
+    BIN_TYPE="musl"
+  else
+    BIN_TYPE="gnu"
+  fi
 
   BIN_SELECTOR=".assets[] | select(.name==\"gpt-cli.$BIN_TYPE\").browser_download_url"
   SUM_SELECTOR=".assets[] | select(.name==\"gpt-cli.$BIN_TYPE.sha256.txt\").browser_download_url"
