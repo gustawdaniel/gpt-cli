@@ -6,37 +6,35 @@ on:
   workflow_dispatch:
 
 jobs:
-#  snap:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Install shunit
-#        run: sudo apt install -y shunit2
-#      - uses: snapcore/action-build@v1
-#        id: snapcraft
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: snap
-#          path: ${{ steps.snapcraft.outputs.snap }}
-#      - run: |
-#          sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }} --classic
-#      - run: alias p=gpt-cli
-#      - run: ./test_version.sh
-#  debug:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Install nFPM
-#        run: |
-#          echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
-#          sudo apt update
-#          sudo apt install -y nfpm shunit2 xorg-dev libxcb-composite0-dev
-#      - run: cargo build --release
-#      - run: nfpm pkg --packager deb --target target
-#      - run: sudo apt install ./target/gpt-cli_0.0.16_amd64.deb
-#      - run: ./test_version.sh
-  deb-rpm:
+  resolve-tag:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.get-tag.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve tag
+        id: get-tag
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if [ -n "${{ github.event.inputs.tag }}" ]; then
+              echo "Using manual tag input: ${{ github.event.inputs.tag }}"
+              echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+            else
+              TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+              echo "No manual tag input. Using latest tag: $TAG"
+              echo "tag=$TAG" >> $GITHUB_OUTPUT
+            fi
+          elif [ "${{ github.event_name }}" == "release" ]; then
+            echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          fi
+
+  deb-rpm:
+    needs: resolve-tag
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v3
       - name: Install nFPM
@@ -47,7 +45,7 @@ jobs:
       - run: cargo build --release
       - name: Get release information
         run: |
-          RELEASE_TAG=$(echo "v0.0.17" | sed "s|v||")
+          RELEASE_TAG=$(echo "${{ env.TAG }}" | sed "s/^v//")
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
       - name: Update fallback release URL
         run: |
