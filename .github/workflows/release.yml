@@ -39,6 +39,8 @@ jobs:
       contents: write
     needs: resolve-tag
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
       - run: |
           echo ${{ env.TAG }}
@@ -78,6 +80,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
+    env:
+      TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
       - name: Install base-devel
         run: |
@@ -144,6 +148,8 @@ jobs:
   musl-docker:
     needs: resolve-tag
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt install musl-tools
@@ -168,6 +174,7 @@ jobs:
             gpt-cli.musl
             gpt-cli.musl.sha256.txt
 
+
   cargo:
     runs-on: ubuntu-latest
     steps:
@@ -182,6 +189,8 @@ jobs:
   deb-rpm:
     needs: resolve-tag
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - name: Install nFPM
@@ -225,9 +234,12 @@ jobs:
             gpt-cli.x86_64.rpm.sha256.txt
             gpt-cli-x86_64.pkg.tar.zst
 
+
   snap:
     needs: resolve-tag
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - name: Install shunit
@@ -251,9 +263,12 @@ jobs:
           files: |
             gpt-cli.snap
 
+
   macos:
     needs: resolve-tag
     runs-on: macos-latest
+    env:
+      TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - run: cargo build --release
