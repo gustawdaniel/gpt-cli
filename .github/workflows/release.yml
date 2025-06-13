@@ -65,8 +65,13 @@ jobs:
           files: |
             gpt-cli.gnu
             gpt-cli.gnu.sha256.txt
-      - name: Update fallback release URL
-        run: sed -i "s|FALLBACK_RELEASE_URL=.*|FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/${{ github.event.release.id }}|" install.sh
+      - name: Patch install.sh with release URL if release exists
+        run: |
+          if [ -n "${{ github.event.release.id }}" ]; then
+            sed -i "s|FALLBACK_RELEASE_URL=.*|FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/${{ github.event.release.id }}|" install.sh
+          else
+            echo "No release ID found, skipping patch."
+          fi
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
@@ -85,42 +90,47 @@ jobs:
     env:
       TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
-      - name: Install base-devel
+      - name: Install base-devel and utilities
         run: |
-          pacman -Syu --noconfirm base-devel wget bc
+          pacman -Syu --noconfirm base-devel wget bc curl git
+
       - name: Derive version values from tag
         run: |
           echo "PKGVER=$(echo '${TAG}' | sed 's/^v//')" >> $GITHUB_ENV
-          echo "PKGREL=$(echo "1+$(curl -s "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=gpt-cli" | grep ^pkgrel= | cut -d "=" -f 2)" | bc)" >> $GITHUB_ENV
-      - name: Use release information
+          PKGREL=$(curl -s "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=gpt-cli" | grep ^pkgrel= | cut -d "=" -f 2)
+          echo "PKGREL=$((PKGREL + 1))" >> $GITHUB_ENV
+
+      - name: Show derived values
         run: |
-          echo "Using PKGVER: ${PKGVER} and PKGREL: ${PKGREL}"
-      - run: echo ${{ env.PKGVER }}
-      - run: echo ${{ env.PKGREL }}
-      - name: Setup environment2
+          echo "PKGVER=${PKGVER}"
+          echo "PKGREL=${PKGREL}"
+
+      - name: Download binary and calculate checksum
         run: |
-          wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli.gnu" -O gpt-cli.gnu
-          echo "CHECKSUM=$(sha512sum gpt-cli.gnu | cut -d " " -f 1)" >> $GITHUB_ENV
+          wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${PKGVER}/gpt-cli.gnu" -O gpt-cli.gnu
+          echo "CHECKSUM=$(sha512sum gpt-cli.gnu | cut -d ' ' -f 1)" >> $GITHUB_ENV
+
       - name: Prepare PKGBUILD
         run: |
-          cat <<EOT >> PKGBUILD
+          cat <<EOF > PKGBUILD
           pkgname=gpt-cli
-          pkgver=${{ env.PKGVER }}
-          pkgrel=${{ env.PKGREL }}
-          pkgdesc="Run linux commands with natural language. Eg 'show my graphic card' instead 'lspci | grep VGA'"
+          pkgver=${PKGVER}
+          pkgrel=${PKGREL}
+          pkgdesc="Run linux commands with natural language. Eg 'show my graphic card' instead of 'lspci | grep VGA'"
           arch=('x86_64')
           url="https://github.com/gustawdaniel/gpt-cli"
           license=('MIT')
           depends=('xorg-server-devel' 'libxcb')
           options=()
-          source_x86_64=("https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli.gnu")
-          sha512sums_x86_64=('${{ env.CHECKSUM }}')
-          
+          source_x86_64=("https://github.com/gustawdaniel/gpt-cli/releases/download/v\${pkgver}/gpt-cli.gnu")
+          sha512sums_x86_64=('${CHECKSUM}')
+        
           package() {
-          install -Dm755 "\$srcdir/gpt-cli.gnu" "\$pkgdir/usr/bin/gpt-cli"
-          ln -s "/usr/bin/gpt-cli" "\$pkgdir/usr/bin/p"
+            install -Dm755 "\$srcdir/gpt-cli.gnu" "\$pkgdir/usr/bin/gpt-cli"
+            ln -s "/usr/bin/gpt-cli" "\$pkgdir/usr/bin/p"
           }
-          EOT
+          EOF
+
       - name: Generate .SRCINFO
         run: |
           useradd -m builduser
@@ -128,11 +138,13 @@ jobs:
           echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
           chown -R builduser:builduser .
           sudo -u builduser bash -c "makepkg --printsrcinfo > .SRCINFO"
+
       - name: Show files
         run: |
           ls -la
           cat PKGBUILD
           cat .SRCINFO
+
       - name: Publish AUR package
         uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
         with:
