@@ -35,10 +35,10 @@ jobs:
           fi
 
   gnu-bash:
-    permissions:
-      contents: write
     needs: resolve-tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
@@ -148,6 +148,8 @@ jobs:
   musl-docker:
     needs: resolve-tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
@@ -197,6 +199,8 @@ jobs:
   deb-rpm:
     needs: resolve-tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
@@ -246,6 +250,8 @@ jobs:
   snap:
     needs: resolve-tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
@@ -275,6 +281,8 @@ jobs:
   macos:
     needs: resolve-tag
     runs-on: macos-latest
+    permissions:
+      contents: write
     env:
       TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
