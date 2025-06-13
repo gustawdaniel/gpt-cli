@@ -88,18 +88,15 @@ jobs:
       - name: Install base-devel
         run: |
           pacman -Syu --noconfirm base-devel wget bc
-      - name: Get release information
+      - name: Derive version values from tag
         run: |
-          RELEASE_TAG=$(echo ${{ github.event.release.tag_name }} | sed "s|v||")
-          echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
+          echo "PKGVER=$(echo '${TAG}' | sed 's/^v//')" >> $GITHUB_ENV
+          echo "PKGREL=$(echo "1+$(curl -s "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=gpt-cli" | grep ^pkgrel= | cut -d "=" -f 2)" | bc)" >> $GITHUB_ENV
       - name: Use release information
         run: |
-          echo "Using release tag: $RELEASE_TAG"
-      - name: Setup environment
-        run: |
-          echo "PKGVER=${{ env.RELEASE_TAG }}" >> $GITHUB_ENV
-          echo "PKGREL=$(echo "1+$(curl "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=gpt-cli" | head -n 3 | tail -n 1 | cut -d "=" -f 2)" | bc)" >> $GITHUB_ENV
+          echo "Using PKGVER: ${PKGVER} and PKGREL: ${PKGREL}"
       - run: echo ${{ env.PKGVER }}
+      - run: echo ${{ env.PKGREL }}
       - name: Setup environment2
         run: |
           wget "https://github.com/gustawdaniel/gpt-cli/releases/download/v${{ env.PKGVER }}/gpt-cli.gnu" -O gpt-cli.gnu
