@@ -34,7 +34,7 @@ jobs:
             echo "tag=$TAG" >> $GITHUB_OUTPUT
           fi
 
-deb-rpm:
+  deb-rpm:
     needs: resolve-tag
     runs-on: ubuntu-latest
     env:
