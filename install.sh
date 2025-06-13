@@ -114,7 +114,7 @@ function compile_binary {
 }
 
 # Main
-if [ "$1" = "--local" ]; then
+if [ "${1:-}" = "--local" ]; then
   echo "Compilation started."
   set_pkg_manager
   compile_binary
