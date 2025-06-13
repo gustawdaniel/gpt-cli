@@ -3,7 +3,7 @@
 # Ensure script stops on error
 set -euo pipefail
 
-FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/
+FALLBACK_RELEASE_URL=https://api.github.com/repos/gustawdaniel/gpt-cli/releases/96442904
 
 function set_pkg_manager {
   if [ "$(uname)" = "Darwin" ]; then
