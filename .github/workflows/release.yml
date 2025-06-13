@@ -96,7 +96,7 @@ jobs:
 
       - name: Derive version values from tag
         run: |
-          echo "PKGVER=$(echo '${{ env.TAG }}' | sed 's/^v//')" >> $GITHUB_ENV
+          echo "PKGVER=$(echo "$TAG" | sed 's/^v//')" >> $GITHUB_ENV
           PKGREL=$(curl -s "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=gpt-cli" | grep ^pkgrel= | cut -d "=" -f 2)
           echo "PKGREL=$((PKGREL + 1))" >> $GITHUB_ENV
 
