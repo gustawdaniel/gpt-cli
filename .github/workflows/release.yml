@@ -4,11 +4,40 @@ on:
   release:
     types: [created]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (e.g. v1.2.3). Leave empty to use latest tag."
+        required: false
 
 jobs:
+  resolve-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.get-tag.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve tag
+        id: get-tag
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if [ -n "${{ github.event.inputs.tag }}" ]; then
+              echo "Using manual tag input: ${{ github.event.inputs.tag }}"
+              echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+            else
+              TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+              echo "No manual tag input. Using latest tag: $TAG"
+              echo "tag=$TAG" >> $GITHUB_OUTPUT
+            fi
+          elif [ "${{ github.event_name }}" == "release" ]; then
+            echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          fi
+
   gnu-bash:
     permissions:
       contents: write
+    needs: resolve-tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +51,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
+          tag_name: ${{ env.TAG }}
           files: |
             gpt-cli.gnu
             gpt-cli.gnu.sha256.txt
@@ -126,6 +156,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
+          tag_name: ${{ env.TAG }}
           files: |
             gpt-cli.musl
             gpt-cli.musl.sha256.txt
@@ -178,6 +209,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
+          tag_name: ${{ env.TAG }}
           files: |
             gpt-cli_amd64.deb
             gpt-cli.x86_64.rpm
@@ -206,6 +238,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
+          tag_name: ${{ env.TAG }}
           files: |
             gpt-cli.snap
 
@@ -221,6 +254,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
+          tag_name: ${{ env.TAG }}
           files: |
             gpt-cli.macos
             gpt-cli.macos.sha256.txt
