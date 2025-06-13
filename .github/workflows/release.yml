@@ -204,38 +204,47 @@ jobs:
       TAG: ${{ needs.resolve-tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install nFPM
+      - name: Install tools
         run: |
           echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
           sudo apt update
-          sudo apt install -y nfpm shunit2 xorg-dev libxcb-composite0-dev
-      - run: cargo build --release
+          sudo apt install -y nfpm shunit2 xorg-dev libxcb-composite0-dev gettext-base
+      - name: Build binary
+        run: cargo build --release
       - name: Get release information
         run: |
-          RELEASE_TAG=$(echo "${{ env.TAG }}" | sed "s/^v//")
+          RELEASE_TAG=$(echo "${TAG}" | sed "s/^v//")
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
-      - name: Update fallback release URL
+      - name: Prepare nfpm.yaml from template
         run: |
-          sed -i "s|version: .*|version: \"${{ env.RELEASE_TAG }}\"|" nfpm.yaml
-      - run: cat nfpm.yaml
-      - run: nfpm pkg --packager deb --target target
-      - run: ls -la target
-      - run: sudo apt install ./target/gpt-cli_${{ env.RELEASE_TAG }}_amd64.deb
-      - run: ./test_version.sh
-      - run: nfpm pkg --packager rpm --target target
-      - run: nfpm pkg --packager archlinux --target target
-      - name: Compute shasums
+          envsubst < nfpm.yaml.template > nfpm.yaml
+          cat nfpm.yaml
+      - name: Build DEB
+        run: nfpm pkg --packager deb --target target
+      - name: Install .deb for testing
         run: |
-          mv ./target/gpt-cli_${{ env.RELEASE_TAG }}_amd64.deb gpt-cli_amd64.deb
-          mv ./target/gpt-cli-${{ env.RELEASE_TAG }}.x86_64.rpm gpt-cli.x86_64.rpm
-          mv ./target/gpt-cli-${{ env.RELEASE_TAG }}-1-x86_64.pkg.tar.zst gpt-cli-x86_64.pkg.tar.zst
+          sudo apt install ./target/gpt-cli_*.deb
+          ./test_version.sh
+      - name: Build RPM and Arch packages
+        run: |
+          nfpm pkg --packager rpm --target target
+          nfpm pkg --packager archlinux --target target
+      - name: Move and rename output packages
+        run: |
+          DEB_FILE=$(find target -name "*.deb" | head -n 1)
+          RPM_FILE=$(find target -name "*.rpm" | head -n 1)
+          ZST_FILE=$(find target -name "*.pkg.tar.zst" | head -n 1)
+
+          cp "$DEB_FILE" gpt-cli_amd64.deb
+          cp "$RPM_FILE" gpt-cli.x86_64.rpm
+          cp "$ZST_FILE" gpt-cli-x86_64.pkg.tar.zst
+
           shasum -a 256 gpt-cli_amd64.deb | cut -d " " -f 1 > gpt-cli_amd64.deb.sha256.txt
           shasum -a 256 gpt-cli.x86_64.rpm | cut -d " " -f 1 > gpt-cli.x86_64.rpm.sha256.txt
-      - run: ls -la
-      - name: Release
+
+      - run: ls -lh
+      - name: Release artifacts
         uses: softprops/action-gh-release@v2
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           tag_name: ${{ env.TAG }}
           files: |
@@ -244,7 +253,6 @@ jobs:
             gpt-cli_amd64.deb.sha256.txt
             gpt-cli.x86_64.rpm.sha256.txt
             gpt-cli-x86_64.pkg.tar.zst
-
 
   snap:
     needs: resolve-tag
