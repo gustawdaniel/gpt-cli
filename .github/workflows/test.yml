@@ -76,7 +76,7 @@ jobs:
         with:
           toolchain: nightly
           profile: minimal
-          components: rustfmt, clippy
+          components: rustfmt, clippy, llvm-tools-preview
           override: true
 
       - name: Install clipboard deps
