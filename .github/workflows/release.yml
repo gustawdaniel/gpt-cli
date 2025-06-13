@@ -48,6 +48,8 @@ jobs:
           echo "TAG is: $TAG"
       - name: Debug output from resolve-tag
         run: echo "Resolved tag is ${{ needs.resolve-tag.outputs.tag }}"
+      - name: Debug tag
+        run: echo "ref_name ${{github.ref_name}} | ref_type ${{github.ref_type}}"
       - uses: actions/checkout@v4
       - name: Install clipboard deps
         run: sudo apt install xorg-dev libxcb-composite0-dev
@@ -56,8 +58,8 @@ jobs:
       - run: shasum -a 256 gpt-cli.gnu | cut -d " " -f 1 > gpt-cli.gnu.sha256.txt
       - name: Release
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           tag_name: ${{ env.TAG }}
           files: |
@@ -168,8 +170,8 @@ jobs:
       - run: shasum -a 256 gpt-cli.musl | cut -d " " -f 1 > gpt-cli.musl.sha256.txt
       - name: Release
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           tag_name: ${{ env.TAG }}
           files: |
@@ -235,8 +237,8 @@ jobs:
       - run: ls -la
       - name: Release
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           tag_name: ${{ env.TAG }}
           files: |
@@ -270,8 +272,8 @@ jobs:
       - run: ./test_version.sh
       - name: Release
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           tag_name: ${{ env.TAG }}
           files: |
@@ -292,8 +294,8 @@ jobs:
       - run: shasum -a 256 gpt-cli.macos | cut -d " " -f 1 > gpt-cli.macos.sha256.txt
       - name: Release
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           tag_name: ${{ env.TAG }}
           files: |
